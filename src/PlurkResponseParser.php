@@ -20,6 +20,13 @@ require_once('Data/main.php');
 class PlurkResponseParser
 {
 	// ------------------------------------------------------------------------------------------------------ //
+	
+	/**
+	 * Result is string.
+	 *
+	 * @var	int
+	 */
+	const RESULT_STRING = 0;
 
 	/**
 	 * Result is info of alerts.
@@ -160,6 +167,27 @@ class PlurkResponseParser
 	 * @var	int
 	 */
 	const RESULT_KARMA = 20;
+	
+	/**
+	 * Result is an info of Plurk Top collections.
+	 *
+	 * @var	int
+	 */
+	const RESULT_COLLECTIONS = 21;
+	
+	/**
+	 * Result is a string of default name of collection for current user.
+	 *
+	 * @var	int
+	 */
+	const RESULT_DEF_COLLECTION = 22;
+	
+	/**
+	 * Result is info of plurks, users and offset.
+	 *
+	 * @var	int
+	 */
+	const RESULT_PLURKS_USERS_OFFSET = 23;
 
 	// ------------------------------------------------------------------------------------------------------ //
 
@@ -191,7 +219,25 @@ class PlurkResponseParser
 	 */
 	public function parse($response, $resultType = NULL)
 	{
+		if($resultType == self::RESULT_STRING)
+		{
+			// Return the result directly.
+			return $response;
+		}
+		
 		$jsonAry = json_decode($response, true);
+		
+		if($resultType == self::RESULT_DEF_COLLECTION)
+		{
+			// /API/PlurkTop/getDefaultCollection returns a collection name only.
+			if(!is_string($jsonAry))
+			{
+				$this->_errMsg = "Error response: $response";
+				throw new PlurkException($this->_errMsg);
+			}
+			
+			return $jsonAry;
+		}
 
 		if(!is_array($jsonAry))
 		{
@@ -211,26 +257,28 @@ class PlurkResponseParser
 
 		switch($resultType)
 		{
-			case self::RESULT_ALERT:			return $this->parseAlert($jsonAry);
-			case self::RESULT_ALERTS:			return $this->parseAlerts($jsonAry);
-			case self::RESULT_BLOCK:			return $this->parseBlock($jsonAry);
-			case self::RESULT_CHANNEL_COMET:	return $this->parseChannelComet($jsonAry);
-			case self::RESULT_CHANNEL_USER:		return $this->parseChannelUser($jsonAry);
-			case self::RESULT_DEFAULT:			return json_decode($response, true);
-			case self::RESULT_EMOTICONS:		return $this->parseEmoticons($jsonAry);
-			case self::RESULT_PICTURE:			return $this->parsePicture($jsonAry);
-			case self::RESULT_PLURK:			return $this->parsePlurk($jsonAry);
-			case self::RESULT_PLURKS:			return $this->parsePlurks($jsonAry);
-			case self::RESULT_PLURKS_USERS:		return $this->parsePlurksUsers($jsonAry);
-			case self::RESULT_PROFILE:			return $this->parseProfile($jsonAry);
-			case self::RESULT_RESPONSE:			return $this->parseResponse($jsonAry);
-			case self::RESULT_SEARCH_PLURK:		return $this->parseSearchPlurk($jsonAry);
-			case self::RESULT_SEARCH_USER:		return $this->parseSearchUser($jsonAry);
-			case self::RESULT_SUCCESS_TEXT:		return $this->parseSuccessText($jsonAry);
-			case self::RESULT_UNREAD_COUNT:		return $this->parseUnreadCount($jsonAry);
-			case self::RESULT_USER:				return $this->parseUser($jsonAry);
-			case self::RESULT_USERS:			return $this->parseUsers($jsonAry);
-			case self::RESULT_KARMA:			return $this->parseKarma($jsonAry);
+			case self::RESULT_ALERT:				return $this->parseAlert($jsonAry);
+			case self::RESULT_ALERTS:				return $this->parseAlerts($jsonAry);
+			case self::RESULT_BLOCK:				return $this->parseBlock($jsonAry);
+			case self::RESULT_CHANNEL_COMET:		return $this->parseChannelComet($jsonAry);
+			case self::RESULT_CHANNEL_USER:			return $this->parseChannelUser($jsonAry);
+			case self::RESULT_DEFAULT:				return json_decode($response, true);
+			case self::RESULT_EMOTICONS:			return $this->parseEmoticons($jsonAry);
+			case self::RESULT_PICTURE:				return $this->parsePicture($jsonAry);
+			case self::RESULT_PLURK:				return $this->parsePlurk($jsonAry);
+			case self::RESULT_PLURKS:				return $this->parsePlurks($jsonAry);
+			case self::RESULT_PLURKS_USERS:			return $this->parsePlurksUsers($jsonAry);
+			case self::RESULT_PLURKS_USERS_OFFSET:	return $this->parsePlurksUsersOffset($jsonAry);
+			case self::RESULT_PROFILE:				return $this->parseProfile($jsonAry);
+			case self::RESULT_RESPONSE:				return $this->parseResponse($jsonAry);
+			case self::RESULT_SEARCH_PLURK:			return $this->parseSearchPlurk($jsonAry);
+			case self::RESULT_SEARCH_USER:			return $this->parseSearchUser($jsonAry);
+			case self::RESULT_SUCCESS_TEXT:			return $this->parseSuccessText($jsonAry);
+			case self::RESULT_UNREAD_COUNT:			return $this->parseUnreadCount($jsonAry);
+			case self::RESULT_USER:					return $this->parseUser($jsonAry);
+			case self::RESULT_USERS:				return $this->parseUsers($jsonAry);
+			case self::RESULT_KARMA:				return $this->parseKarma($jsonAry);
+			case self::RESULT_COLLECTIONS:			return $this->parseCollections($jsonAry);
 			default:
 				$this->_errMsg = 'Unknow result type.';
 				throw new PlurkException($this->_errMsg);
@@ -393,6 +441,28 @@ class PlurkResponseParser
 		$info->cometServer	= (string)$jsonAry[PlurkChannelUserInfo::KEY_COMET_SERVER];
 		return $info;
 	}
+	
+	/**
+	 * Parse the collections by JSON.
+	 *
+	 * @param	array	$jsonAry	A JSON decoded array.
+	 * @return	PlurkCollectionInfo	Returns a PlurkCollectionInfo object.
+	 */
+	protected function parseCollections(array $jsonAry)
+	{
+		$collections = array();
+		
+		foreach($jsonAry as $collection)
+		{
+			$info = new PlurkCollectionInfo();
+			$info->name = $collection[0];
+			$info->langCodes = explode(',', $collection[1]);
+			$info->displayName = $collection[2];
+			$collections[] = $info;
+		}
+		
+		return $collections;
+	}
 
 	/**
 	 * Parse all emoticons by JSON.
@@ -451,7 +521,11 @@ class PlurkResponseParser
 
 		$info = new PlurkPlurkInfo();
 		$info->content				= (string)$plurkAry[PlurkPlurkInfo::KEY_CONTENT];
-		$info->contentRaw			= (string)$plurkAry[PlurkPlurkInfo::KEY_CONTENT_RAW];
+		$info->contentRaw			= (int)$plurkAry[PlurkPlurkInfo::KEY_CONTENT_RAW];
+		$info->entryPosted			= (string)$plurkAry[PlurkPlurkInfo::KEY_ENTRY_POSTED];
+		$info->favorers				= $plurkAry[PlurkPlurkInfo::KEY_FAVORERS];
+		$info->favoriteCount		= (int)$plurkAry[PlurkPlurkInfo::KEY_FAVORITE_COUNT];
+		$info->isUnread				= (int)$plurkAry[PlurkPlurkInfo::KEY_IS_UNREAD];
 		$info->lang					= (string)$plurkAry[PlurkPlurkInfo::KEY_LANG];
 		$info->limitedTo			= (array)$plurkAry[PlurkPlurkInfo::KEY_LIMITED_TO];
 		$info->noComments			= (int)$plurkAry[PlurkPlurkInfo::KEY_NO_COMMENTS];
@@ -459,11 +533,18 @@ class PlurkResponseParser
 		$info->plurkId				= (int)$plurkAry[PlurkPlurkInfo::KEY_PLURK_ID];
 		$info->plurkType			= (int)$plurkAry[PlurkPlurkInfo::KEY_PLURK_TYPE];
 		$info->posted				= new DateTime($plurkAry[PlurkPlurkInfo::KEY_POSTED]);
+		$info->posterUid			= (int)$plurkAry[PlurkPlurkInfo::KEY_POSTER_UID];
 		$info->qualifier			= (string)$plurkAry[PlurkPlurkInfo::KEY_QUALIFIER];
 		$info->qualifierTranslated	= (string)$plurkAry[PlurkPlurkInfo::KEY_QUALIFIER_TRANSLATED];
+		$info->replurkers			= $plurkAry[PlurkPlurkInfo::KEY_REPLURKERS];
+		$info->replurkersCount		= (int)$plurkAry[PlurkPlurkInfo::KEY_REPLURKERS_COUNT];
 		$info->responseCount		= (int)$plurkAry[PlurkPlurkInfo::KEY_RESPONSE_COUNT];
 		$info->responsesSeen		= (int)$plurkAry[PlurkPlurkInfo::KEY_RESPONSES_SEEN];
+		$info->score				= (float)$plurkAry[PlurkPlurkInfo::KEY_SCORE];
 		$info->userId				= (int)$plurkAry[PlurkPlurkInfo::KEY_USER_ID];
+		$info->voteDown				= (int)$plurkAry[PlurkPlurkInfo::KEY_VOTE_DOWN];
+		$info->voteUp				= (int)$plurkAry[PlurkPlurkInfo::KEY_VOTE_UP];
+		$info->voteUser				= (int)$plurkAry[PlurkPlurkInfo::KEY_VOTE_USER];
 		$info->id					= (int)$plurkAry[PlurkPlurkInfo::KEY_ID];
 		return $info;
 	}
@@ -500,6 +581,21 @@ class PlurkResponseParser
 		$info = new PlurkPlurksUsersInfo();
 		$info->plurkUsers	= $this->parseUsers($jsonAry[PlurkPlurksUsersInfo::KEY_PLURK_USERS]);
 		$info->plurks		= $this->parsePlurks($jsonAry[PlurkPlurksUsersInfo::KEY_PLURKS]);
+		return $info;
+	}
+	
+	/**
+	 * Parse the relationship of plurks and users and offset by JSON.
+	 *
+	 * @param	array	$jsonAry			A JSON decoded array.
+	 * @return	PlurkPlurksUsersOffsetInfo	Returns a PlurkPlurksUsersOffsetInfo object.
+	 */
+	protected function parsePlurksUsersOffset(array $jsonAry)
+	{
+		$info = new PlurkPlurksUsersOffsetInfo();
+		$info->plurkUsers	= $this->parseUsers($jsonAry[PlurkPlurksUsersOffsetInfo::KEY_PLURK_USERS]);
+		$info->plurks		= $this->parsePlurks($jsonAry[PlurkPlurksUsersOffsetInfo::KEY_PLURKS]);
+		$info->offset		= $jsonAry[PlurkPlurksUsersOffsetInfo::KEY_OFFSET];
 		return $info;
 	}
 
@@ -609,10 +705,12 @@ class PlurkResponseParser
 		$info->avatar			= (int)$jsonAry[PlurkUserInfo::KEY_AVATAR];
 		$info->dateOfBirth		= new DateTime($jsonAry[PlurkUserInfo::KEY_DATE_OF_BIRTH]);
 		$info->displayName		= (string)$jsonAry[PlurkUserInfo::KEY_DISPLAY_NAME];
+		$info->emailConfirmed	= (boolean)$jsonAry[PlurkUserInfo::KEY_EMAIL_CONFIRMED];
 		$info->fullName			= (string)$jsonAry[PlurkUserInfo::KEY_FULL_NAME];
 		$info->gender			= (int)$jsonAry[PlurkUserInfo::KEY_GENDER];
 		$info->hasProfileImage	= (int)$jsonAry[PlurkUserInfo::KEY_HAS_PROFILE_IMAGE];
 		$info->id				= (int)$jsonAry[PlurkUserInfo::KEY_ID];
+		$info->isPremium		= (boolean)$jsonAry[PlurkUserInfo::KEY_IS_PREMIUM];
 		$info->karma			= (double)$jsonAry[PlurkUserInfo::KEY_KARMA];
 		$info->location			= (string)$jsonAry[PlurkUserInfo::KEY_LOCATION];
 		$info->nickName			= (string)$jsonAry[PlurkUserInfo::KEY_NICK_NAME];
