@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		1.0.1
  * @since		1.0
  */
 
@@ -1117,6 +1117,52 @@ class PlurkApp
 		$setting->type = PlurkUsersSetting::TYPE_GET_KARMA_STATS;
 		
 		$this->_strategy = new PlurkUsers($setting);
+		return $this->execute();
+	}
+	
+	// ------------------------------------------------------------------------------------------------------ //
+	// PlutkTop
+	
+	public function getGetCollections()
+	{
+		$setting = new PlurkTopSetting();
+		$setting->type = PlurkTopSetting::TYPE_GET_COLLECTIONS;
+		
+		$this->_strategy = new PlurkTop($setting);
+		return $this->execute();
+	}
+	
+	/**
+	 * Gets default name of collection for current user.
+	 *
+	 * @return	mixed	Returns a string on success or FALSE on failure.
+	 */
+	public function getDefaultCollection()
+	{
+		$setting = new PlurkTopSetting();
+		$setting->type = PlurkTopSetting::TYPE_GET_DEFAULT_COLLECTION;
+		
+		$this->_strategy = new PlurkTop($setting);
+		return $this->execute();
+	}
+	
+	/**
+	 * Gets plurks in PlurkTop
+	 * 
+	 * @param	float	Offset of Plurks in PlurkTop, e.g. 0.99.
+	 * @param	sorting	The way to sort plurks in PlurkTop, can be PlurkTopSetting::SORTING_HOT for
+	 * 					sorting by popularity or PlurkTopSetting::SORTING_NEW for posted time.  
+	 * @return	mixed	Returns a PlurkPlurksUsersOffsetInfo object on success or FALSE on failure.
+	 */
+	public function getTopPlurks($offset = NULL, $sorting = NULL)
+	{
+		$setting = new PlurkTopSetting();
+		$setting->type = PlurkTopSetting::TYPE_GET_PLURKS;
+		
+		$setting->offset = $offset;
+		$setting->sorting = $sorting;
+		
+		$this->_strategy = new PlurkTop($setting);
 		return $this->execute();
 	}
 	

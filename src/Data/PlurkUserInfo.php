@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		1.0.1
  * @since		1.0
  */
 
@@ -54,10 +54,12 @@ class PlurkUserInfo
 	const KEY_AVATAR = 'avatar';
 	const KEY_DATE_OF_BIRTH = 'date_of_birth';
 	const KEY_DISPLAY_NAME = 'display_name';
+	const KEY_EMAIL_CONFIRMED = 'email_confirmed';
 	const KEY_FULL_NAME = 'full_name';
 	const KEY_GENDER = 'gender';
 	const KEY_HAS_PROFILE_IMAGE = 'has_profile_image';
 	const KEY_ID = 'id';
+	const KEY_IS_PREMIUM = 'is_premium';
 	const KEY_KARMA = 'karma';
 	const KEY_LOCATION = 'location';
 	const KEY_NICK_NAME = 'nick_name';
@@ -69,10 +71,12 @@ class PlurkUserInfo
 	public $avatar;
 	public $dateOfBirth;
 	public $displayName;
+	public $emailConfirmed;
 	public $fullName;
 	public $gender;//1 is male, 0 is female.
 	public $hasProfileImage;
 	public $id;
+	public $isPremium;
 	public $karma;
 	public $location;
 	public $nickName;

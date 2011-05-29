@@ -8,10 +8,11 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		1.0.1
  * @since		1.0
  */
 
+require_once('Plurk/Setting/PlurkProfileSetting.php');
 require_once('PlurkBase.php');
 
 /**
