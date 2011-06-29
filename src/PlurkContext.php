@@ -37,7 +37,7 @@ class PlurkContext
 	 */
 	public function __construct(PlurkStrategy $strategy)
 	{
-		parent::__construct($strategy);
+		$this->_strategy = $strategy;
 	}
 
 	/**

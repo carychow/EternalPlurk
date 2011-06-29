@@ -12,7 +12,7 @@
  * @since		1.0
  */
 
-require_once('Plurk/Setting/PlurkTimelineSetting.php');
+require_once(dirname(__FILE__) . '/../Setting/PlurkTimelineSetting.php');
 require_once('PlurkBase.php');
 
 /**
