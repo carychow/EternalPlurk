@@ -12,7 +12,7 @@
  * @since		1.0
  */
 
-require_once('Plurk/Setting/PlurkFriendsFansSetting.php');
+require_once(dirname(__FILE__) . '/../Setting/PlurkFriendsFansSetting.php');
 require_once('PlurkBase.php');
 
 /**

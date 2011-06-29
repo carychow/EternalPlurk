@@ -12,16 +12,14 @@
  * @since		1.0
  */
 
-require_once('Common/ApiRequest.php');
-require_once('Common/Misc.php');
-require_once('Plurk/PlurkException.php');
-require_once('Plurk/PlurkResponseParser.php');
-require_once('Plurk/PlurkStrategy.php');
+require_once(dirname(__FILE__) . '/../PlurkException.php');
+require_once(dirname(__FILE__) . '/../PlurkResponseParser.php');
+require_once(dirname(__FILE__) . '/../PlurkStrategy.php');
 
 /**
  * The base class for Plurk API.
  */
-abstract class PlurkBase implements ApiRequest, PlurkStrategy
+abstract class PlurkBase implements PlurkStrategy
 {
 	// ------------------------------------------------------------------------------------------------------ //
 
@@ -135,7 +133,7 @@ abstract class PlurkBase implements ApiRequest, PlurkStrategy
 
 		// Options for cURL transfer
 		$options = array(
-			CURLOPT_USERAGENT		=>	Misc::USER_AGENT_NAME,
+			CURLOPT_USERAGENT		=>	'EternalPlurk',
 			CURLOPT_URL				=>	$url,
 			CURLOPT_HEADER			=>	false,		// Do not show the protocol header
 			CURLOPT_NOBODY			=>	false,		// Show the body
