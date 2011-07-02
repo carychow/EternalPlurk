@@ -8,21 +8,21 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
 require_once(dirname(__FILE__) . '/../Setting/PlurkAlertsSetting.php');
-require_once('PlurkBase.php');
+require_once('PlurkOAuth.php');
 
 /**
  * Alerts resources of Plurk API.
  *
  * @link	http://www.plurk.com/API#alerts
  */
-class PlurkAlerts extends PlurkBase
+class PlurkAlerts extends PlurkOAuth
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkAlertsSetting $setting)
 	{
@@ -35,8 +35,8 @@ class PlurkAlerts extends PlurkBase
 		{
 			case PlurkAlertsSetting::TYPE_GET_ACTIVE:			return $this->getActive();
 			case PlurkAlertsSetting::TYPE_GET_HISTORY:			return $this->getHistory();
-			case PlurkAlertsSetting::TYPE_ADD_ALL_AS_FAN:		return $this->addAsFan();
-			case PlurkAlertsSetting::TYPE_ADD_AS_FAN:			return $this->addAllAsFan();
+			case PlurkAlertsSetting::TYPE_ADD_AS_FAN:			return $this->addAsFan();
+			case PlurkAlertsSetting::TYPE_ADD_ALL_AS_FAN:		return $this->addAllAsFan();
 			case PlurkAlertsSetting::TYPE_ADD_ALL_AS_FRIENDS:	return $this->addAllAsFriends();
 			case PlurkAlertsSetting::TYPE_ADD_AS_FRIEND:		return $this->addAsFriend();
 			case PlurkAlertsSetting::TYPE_DENY_FRIENDSHIP:		return $this->denyFriendship();
@@ -45,7 +45,7 @@ class PlurkAlerts extends PlurkBase
 		}
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Return a list of current active alerts.
@@ -163,6 +163,6 @@ class PlurkAlerts extends PlurkBase
 		return $this->sendRequest($url, $args);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

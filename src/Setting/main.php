@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0.1
+ * @version		2.0
  * @since		1.0
  */
 
@@ -17,6 +17,7 @@ require_once('PlurkBlocksSetting.php');
 require_once('PlurkCliquesSetting.php');
 require_once('PlurkEmoticonsSetting.php');
 require_once('PlurkFriendsFansSetting.php');
+require_once('PlurkOAuthSetting.php');
 require_once('PlurkPollingSetting.php');
 require_once('PlurkProfileSetting.php');
 require_once('PlurkRealtimeSetting.php');

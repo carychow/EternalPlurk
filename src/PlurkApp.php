@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0.1
+ * @version		2.0
  * @since		1.0
  */
 
@@ -22,21 +22,7 @@ require_once('PlurkException.php');
  */
 class PlurkApp
 {
-	// ------------------------------------------------------------------------------------------------------ //
-	
-	/**
-	 * API key for the Plurk API.
-	 * 
-	 * @var	string
-	 */
-	private $_apiKey;
-	
-	/**
-	 * The path of cookie files.
-	 * 
-	 * @var	string
-	 */
-	private $_cookiePath;
+	// ------------------------------------------------------------------------------------------ //
 	
 	/**
 	 * Error message of the response.
@@ -51,27 +37,53 @@ class PlurkApp
 	 */
 	private $_strategy;
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	/**
+	 * Plurk App's key.
+	 * 
+	 * @var string
+	 */
+	private $_consumerKey;
 	
 	/**
-	 * Sets the path Cookie file. It must be set if the method requires login.
-	 * Note that it will overwirte the exist file with same name.
-	 *
-	 * @param	string	$cookiePath	The path of cookie files.
+	 * Plurk App's secret.
+	 * 
+	 * @var string
 	 */
-	public function setCookiePath($cookiePath)
-	{
-		$this->_cookiePath = $cookiePath;
-	}
+	private $_consumerSecret;
 	
 	/**
-	 * Sets the Plurk API key.
-	 *
-	 * @param	string	$apiKey	Your Plurk API key.
+	 * Access token key of user.
+	 * 
+	 * @var string
 	 */
-	public function setApiKey($apiKey)
+	private $_oAuthToken;
+	
+	/**
+	 * Access token secret of user.
+	 * 
+	 * @var string
+	 */
+	private $_oAuthTokenSecret;
+	
+	// ------------------------------------------------------------------------------------------ //
+	
+	/**
+	 * Creates a new PlurkApp object.
+	 *
+	 * @param	string	$consumerKey		The Plurk App's key.
+	 * @param	string	$consumerSecret		The Plurk App's secret.
+	 * @param	string	$oAuthToken			The access token key of user. It is not needed when 
+	 * 										using the methods of authorization.
+	 * @param	string	$oAuthTokenSecret	The access token secret of user. It is not needed when 
+	 * 										using the methods of authorization.
+	 */
+	public function __construct($consumerKey, $consumerSecret, $oAuthToken = null,
+		$oAuthTokenSecret = null)
 	{
-		$this->_apiKey = $apiKey;
+		$this->_consumerKey = $consumerKey;
+		$this->_consumerSecret = $consumerSecret;
+		$this->_oAuthToken = $oAuthToken;
+		$this->_oAuthTokenSecret = $oAuthTokenSecret;
 	}
 	
 	/**
@@ -84,7 +96,43 @@ class PlurkApp
 		return $this->_errMsg;
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
+	// OAuth
+	
+	/**
+	 * Start authorization.
+	 * 
+	 * @return	bool	Returns TRUE on success or FALSE on failure.
+	 */
+	public function startAuth()
+	{
+		$setting = new PlurkOAuthSetting($setting);
+		$setting->type = PlurkOAuthSetting::TYPE_START_AUTH;
+		
+		$this->setupAuthSettings($setting);
+		
+		$this->_strategy = new PlurkOAuth($setting);
+		return $this->execute();
+	}
+	
+	/**
+	 * For web application, Plurk will re-direct to the callback URL which is in the setting.
+	 *
+	 * @return	mixed	Returns a PlurkOAuthInfo object contains user's access token key & secret 
+	 * 					on success or FALSE on failure.
+	 */
+	public function parseCallback()
+	{
+		$setting = new PlurkOAuthSetting($setting);
+		$setting->type = PlurkOAuthSetting::TYPE_PARSE_CALLBACK;
+		
+		$this->setupAuthSettings($setting);
+		
+		$this->_strategy = new PlurkOAuth($setting);
+		return $this->execute();
+	}
+	
+	// ------------------------------------------------------------------------------------------ //
 	// Alerts
 	
 	/**
@@ -97,6 +145,8 @@ class PlurkApp
 	{
 		$setting = new PlurkAlertsSetting();
 		$setting->type = PlurkAlertsSetting::TYPE_GET_ACTIVE;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkAlerts($setting);
 		return $this->execute();
@@ -112,6 +162,8 @@ class PlurkApp
 	{
 		$setting = new PlurkAlertsSetting();
 		$setting->type = PlurkAlertsSetting::TYPE_GET_HISTORY;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkAlerts($setting);
 		return $this->execute();
@@ -130,6 +182,8 @@ class PlurkApp
 		$setting->type = PlurkAlertsSetting::TYPE_ADD_AS_FAN;
 		$setting->userId = $userId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkAlerts($setting);
 		return $this->execute();
 	}
@@ -145,6 +199,8 @@ class PlurkApp
 		$setting = new PlurkAlertsSetting();
 		$setting->type = PlurkAlertsSetting::TYPE_ADD_ALL_AS_FAN;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkAlerts($setting);
 		return $this->execute();
 	}
@@ -159,6 +215,8 @@ class PlurkApp
 	{
 		$setting = new PlurkAlertsSetting();
 		$setting->type = PlurkAlertsSetting::TYPE_ADD_ALL_AS_FRIENDS;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkAlerts($setting);
 		return $this->execute();
@@ -177,6 +235,8 @@ class PlurkApp
 		$setting->type = PlurkAlertsSetting::TYPE_ADD_AS_FRIEND;
 		$setting->userId = $userId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkAlerts($setting);
 		return $this->execute();
 	}
@@ -193,6 +253,8 @@ class PlurkApp
 		$setting = new PlurkAlertsSetting();
 		$setting->type = PlurkAlertsSetting::TYPE_DENY_FRIENDSHIP;
 		$setting->userId = $userId;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkAlerts($setting);
 		return $this->execute();
@@ -211,11 +273,13 @@ class PlurkApp
 		$setting->type = PlurkAlertsSetting::TYPE_REMOVE_NOTIFICATION;
 		$setting->userId = $userId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkAlerts($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Blocks
 	
 	/**
@@ -225,11 +289,13 @@ class PlurkApp
 	 * @param	int	offset	What page should be shown, e.g. 0, 10, 20.
 	 * @return	mixed		Returns a PlurkBlockInfo object on success or FALSE on failure.
 	 */
-	public function get($offset = 0)
+	public function getBlocks($offset = 0)
 	{
 		$setting = new PlurkBlocksSetting();
 		$setting->type = PlurkBlocksSetting::TYPE_GET;
 		$setting->offset = (int)$offset;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkBlocks($setting);
 		return $this->execute();
@@ -248,6 +314,8 @@ class PlurkApp
 		$setting->type = PlurkBlocksSetting::TYPE_BLOCK;
 		$setting->userId = $userId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkBlocks($setting);
 		return $this->execute();
 	}
@@ -265,11 +333,13 @@ class PlurkApp
 		$setting->type = PlurkBlocksSetting::TYPE_UNBLOCK;
 		$setting->userId = $userId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkBlocks($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Cliques
 	
 	/**
@@ -282,6 +352,8 @@ class PlurkApp
 	{
 		$setting = new PlurkCliquesSetting();
 		$setting->type = PlurkCliquesSetting::TYPE_GET_CLIQUES;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkCliques($setting);
 		return $this->execute();
@@ -300,6 +372,8 @@ class PlurkApp
 		$setting->type = PlurkCliquesSetting::TYPE_GET_CLIQUE;
 		$setting->cliqueName = $cliqueName;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkCliques($setting);
 		return $this->execute();
 	}
@@ -316,6 +390,8 @@ class PlurkApp
 		$setting = new PlurkCliquesSetting();
 		$setting->type = PlurkCliquesSetting::TYPE_CREATE_CLIQUE;
 		$setting->cliqueName = $cliqueName;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkCliques($setting);
 		return $this->execute();
@@ -336,6 +412,8 @@ class PlurkApp
 		$setting->cliqueName = $cliqueName;
 		$setting->newName = $newName;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkCliques($setting);
 		return $this->execute();
 	}
@@ -348,12 +426,14 @@ class PlurkApp
 	 * @param	int		$userId		The user to add to the clique.
 	 * @return	bool				Returns TRUE on success or FALSE on failure.
 	 */
-	public function add($cliqueName, $userId)
+	public function addToClique($cliqueName, $userId)
 	{
 		$setting = new PlurkCliquesSetting();
 		$setting->type = PlurkCliquesSetting::TYPE_ADD;
 		$setting->cliqueName = $cliqueName;
 		$setting->userId = $userId;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkCliques($setting);
 		return $this->execute();
@@ -367,18 +447,20 @@ class PlurkApp
 	 * @param	int		$userId		The user to remove from the clique.
 	 * @return	bool				Returns TRUE on success or FALSE on failure.
 	 */
-	public function remove($cliqueName, $userId)
+	public function removeFromClique($cliqueName, $userId)
 	{
 		$setting = new PlurkCliquesSetting();
 		$setting->type = PlurkCliquesSetting::TYPE_REMOVE;
 		$setting->cliqueName = $cliqueName;
 		$setting->userId = $userId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkCliques($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Emoticons
 	
 	/**
@@ -392,11 +474,13 @@ class PlurkApp
 		$setting = new PlurkEmoticonsSetting();
 		$setting->type = PlurkEmoticonsSetting::TYPE_GET;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkEmoticons($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Friends and fans
 	
 	/**
@@ -404,14 +488,18 @@ class PlurkApp
 	 *
 	 * @param	int		$userId	Must be integer (like 34), DO NOT use nick name (like amix).
 	 * @param	int		$offset	The offset, can be 10, 20, 30 etc.
+	 * @param	int		$limit	The max number of friends to be returned (default 10).
 	 * @return	mixed	Returns an array of PlurkUserInfo object on success or FALSE on failure.
 	 */
-	public function getFriendsByOffset($userId, $offset = 0)
+	public function getFriendsByOffset($userId, $offset = 0, $limit = 10)
 	{
 		$setting = new PlurkFriendsFansSetting();
 		$setting->type = PlurkFriendsFansSetting::TYPE_GET_FRIENDS_BY_OFFSET;
 		$setting->userId = (int)$userId;
 		$setting->offset = $offset;
+		$setting->limit = $limit;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkFriendsFans($setting);
 		return $this->execute();
@@ -422,31 +510,40 @@ class PlurkApp
 	 *
 	 * @param	mixed	$userId	Must be integer (like 34), DO NOT use nick name (like amix).
 	 * @param	int		$offset	The offset, can be 10, 20, 30 etc.
+	 * @param	int		$limit	The max number of friends to be returned (default 10).
 	 * @return	mixed	Returns an array of PlurkUserInfo object on success or FALSE on failure.
 	 */
-	public function getFansByOffset($userId, $offset = 0)
+	public function getFansByOffset($userId, $offset = 0, $limit = 10)
 	{
 		$setting = new PlurkFriendsFansSetting();
 		$setting->type = PlurkFriendsFansSetting::TYPE_GET_FANS_BY_OFFSET;
 		$setting->userId = $userId;
 		$setting->offset = $offset;
+		$setting->limit = $limit;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkFriendsFans($setting);
 		return $this->execute();
 	}
 	
 	/**
-	 * Returns users that the current logged in user follows as fan - in chucks of 10 fans at a time.
+	 * Returns users that the current logged in user follows as fan - in chucks of 10 fans at a 
+	 * time.
 	 * P.S. requires login
 	 *
 	 * @param	int		$offset	The offset, can be 10, 20, 30 etc.
+	 * @param	int		$limit	The max number of friends to be returned (default 10).
 	 * @return	mixed	Returns an array of PlurkUserInfo object on success or FALSE on failure.
 	 */
-	public function getFollowingByOffset($offset = 0)
+	public function getFollowingByOffset($offset = 0, $limit = 10)
 	{
 		$setting = new PlurkFriendsFansSetting();
 		$setting->type = PlurkFriendsFansSetting::TYPE_GET_FOLLOWING_BY_OFFSET;
 		$setting->offset = $offset;
+		$setting->limit = $limit;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkFriendsFans($setting);
 		return $this->execute();
@@ -465,6 +562,8 @@ class PlurkApp
 		$setting->type = PlurkFriendsFansSetting::TYPE_BECOME_FRIEND;
 		$setting->friendId = $friendId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkFriendsFans($setting);
 		return $this->execute();
 	}
@@ -481,6 +580,8 @@ class PlurkApp
 		$setting = new PlurkFriendsFansSetting();
 		$setting->type = PlurkFriendsFansSetting::TYPE_REMOVE_AS_FRIEND;
 		$setting->friendId = $friendId;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkFriendsFans($setting);
 		return $this->execute();
@@ -499,17 +600,20 @@ class PlurkApp
 		$setting->type = PlurkFriendsFansSetting::TYPE_BECOME_FAN;
 		$setting->fanId = $fanId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkFriendsFans($setting);
 		return $this->execute();
 	}
 	
 	/**
-	 * Update following. A user can befriend someone, but can unfollow them. This request is also used to stop
-	 * following someone as a fan.
+	 * Update following. A user can befriend someone, but can unfollow them. This request is also 
+	 * used to stop following someone as a fan.
 	 * P.S. requires login
 	 *
 	 * @param	int		$userId	The ID of the user you want to follow/unfollow.
-	 * @param	bool	$follow	TRUE if the user should be followed, and FALSE if the user should be unfollowed.
+	 * @param	bool	$follow	TRUE if the user should be followed, and FALSE if the user should 
+	 * 							be unfollowed.
 	 * @return	bool			Returns TRUE on success or FALSE on failure.
 	 */
 	public function setFollowing($userId, $follow)
@@ -519,14 +623,17 @@ class PlurkApp
 		$setting->userId = $userId;
 		$setting->follow = $follow;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkFriendsFans($setting);
 		return $this->execute();
 	}
 	
 	/**
-	 * Returns a JSON object of the logged in users friends (nick name and full name). This information can be
-	 * used to construct auto-completion for private plurking. Notice that a friend list can be big, depending
-	 * on how many friends a user has, so this list should be lazy-loaded in your application.
+	 * Returns a JSON object of the logged in users friends (nick name and full name). This 
+	 * information can be used to construct auto-completion for private plurking. Notice that a 
+	 * friend list can be big, depending on how many friends a user has, so this list should be 
+	 * lazy-loaded in your application.
 	 *
 	 * @return	mixed	Returns an array of PlurkUserInfo object on success or FALSE on failure.
 	 */
@@ -535,22 +642,25 @@ class PlurkApp
 		$setting = new PlurkFriendsFansSetting();
 		$setting->type = PlurkFriendsFansSetting::TYPE_GET_COMPLETION;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkFriendsFans($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Polling
 	
 	/**
-	 * You should use this call to find out if there any new plurks posted to the user's timeline. It's much 
-	 * more efficient than doing it with /API/Timeline/getPlurks, so please use it :)
+	 * You should use this call to find out if there any new plurks posted to the user's timeline. 
+	 * It's much more efficient than doing it with /API/Timeline/getPlurks, so please use it :)
 	 * P.S. requires login
 	 * 
-	 * @param	mixed	$offset	Return plurks newer than $offset.  It can be a DataTime object or a string
-	 * 							formatted as 2009-6-20T21:55:34.
+	 * @param	mixed	$offset	Return plurks newer than $offset.  It can be a DataTime object or a 
+	 * 							string formatted as 2009-6-20T21:55:34.
 	 * @param	int		$limit	How many plurks should be returned? Default is 50.
-	 * @return	mixed			Returns a PlurkPlurksUsersInfo object on success or FALSE on failure.
+	 * @return	mixed			Returns a PlurkPlurksUsersInfo object on success or FALSE on 
+	 * 							failure.
 	 */
 	public function getPlurks($offset = 'now', $limit = 50)
 	{
@@ -558,6 +668,8 @@ class PlurkApp
 		$setting->type = PlurkPollingSetting::TYPE_GET_PLURKS;
 		$setting->offset = $offset;
 		$setting->limit = (int)$limit;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkPolling($setting);
 		return $this->execute();
@@ -574,16 +686,18 @@ class PlurkApp
 		$setting = new PlurkPollingSetting();
 		$setting->type = PlurkPollingSetting::TYPE_GET_UNREAD_COUNT;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkPolling($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Profile
 	
 	/**
-	 * Returns data that's private for the currently logged in user. This can be used to construct a profile
-	 * and render a timeline of the latest plurks.
+	 * Returns data that's private for the currently logged in user. This can be used to construct 
+	 * a profile and render a timeline of the latest plurks.
 	 * P.S. requires login
 	 *
 	 * @return	mixed	Returns a PlurkProfileInfo object on success or FALSE on failure.
@@ -593,13 +707,15 @@ class PlurkApp
 		$setting = new PlurkProfileSetting();
 		$setting->type = PlurkProfileSetting::TYPE_GET_OWN_PROFILE;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkProfile($setting);
 		return $this->execute();
 	}
 	
 	/**
-	 * Fetches public information such as a user's public plurks and basic information. Fetches also if the
-	 * current logged in user is following the user, are friends with or is a fan.
+	 * Fetches public information such as a user's public plurks and basic information. Fetches 
+	 * also if the current logged in user is following the user, are friends with or is a fan.
 	 *
 	 * @param	mixed	$userId	Can be integer (like 34) or nick name (like amix).
 	 * @return	mixed	Returns a PlurkProfileInfo object on success or FALSE on failure.
@@ -610,16 +726,18 @@ class PlurkApp
 		$setting->type = PlurkProfileSetting::TYPE_GET_PUBLIC_PROFILE;
 		$setting->userId = $userId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkProfile($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Realtime
 	
 	/**
-	 * Get instant notifications when there are new plurks and responses on a user's timeline. This is much more
-	 * efficient and faster than polling so please use it!
+	 * Get instant notifications when there are new plurks and responses on a user's timeline. This 
+	 * is much more efficient and faster than polling so please use it!
 	 * P.S. requires login
 	 *
 	 * @return	mixed	Returns a PlurkChannelUserInfo object on success or FALSE on failure.
@@ -629,21 +747,27 @@ class PlurkApp
 		$setting = new PlurkRealtimeSetting();
 		$setting->type = PlurkRealtimeSetting::TYPE_GET_USER_CHANNEL;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkRealtime($setting);
 		return $this->execute();
 	}
 	
 	/**
-	 * You'll get an URL from getUserChannel() and you do GET requests to this URL to get new data. Your request
-	 * will sleep for about 50 seconds before returning a response if there is no new data added to your channel.
-	 * You won't get notifications on responses that the logged in user adds, but you will get notifications for
+	 * You'll get an URL from getUserChannel() and you do GET requests to this URL to get new data. 
+	 * Your request will sleep for about 50 seconds before returning a response if there is no new 
+	 * data added to your channel. You won't get notifications on responses that the logged in user 
+	 * adds, but you will get notifications for
 	 * new plurks.
 	 *
 	 * @param	string	$serverUrl	You get this from PlurkChannelUserInfo::$_cometServer parameter.
 	 * @param	string	$channel	You get this from PlurkChannelUserInfo::$_channelName parameter.
-	 * @param	int		$offset		Only fetch new messages from a given offset. You'll get offset when a
-	 * 								response is returned, it's returned as PlurkChannelCometInfo::$_newOffset.
-	 * @return	mixed				Returns a PlurkChannelCometInfo object on success or FALSE on failure.
+	 * @param	int		$offset		Only fetch new messages from a given offset. You'll get offset 
+	 * 								when a response is returned, it's returned as 
+	 * 								PlurkChannelCometInfo::newOffset.
+	 * @return	mixed				Returns a PlurkChannelCometInfo object on success or FALSE on 
+	 * 								failure.
+	 * @PlurkChannelUserInfo
 	 */
 	public function getCometChannel($serverUrl, $channel, $offset = 0)
 	{
@@ -653,11 +777,13 @@ class PlurkApp
 		$setting->channel = $channel;
 		$setting->offset = $offset;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkRealtime($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Responses
 	
 	/**
@@ -665,7 +791,8 @@ class PlurkApp
 	 *  
 	 * @param	int	$plurkId		The plurk that the responses belong to. 
 	 * @param	int	$fromResponse	Only fetch responses from an offset - could be 5, 10 or 15.
-	 * @return	mixed				Returns a PlurkResponseInfo object on success or FALSE on failure.
+	 * @return	mixed				Returns a PlurkResponseInfo object on success or FALSE on 
+	 * 								failure.
 	 */
 	public function getResponses($plurkId, $fromResponse = 0)
 	{
@@ -673,6 +800,8 @@ class PlurkApp
 		$setting->type = PlurkResponsesSetting::TYPE_GET;
 		$setting->plurkId = (int)$plurkId;
 		$setting->fromResponse = (int)$fromResponse;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkResponses($setting);
 		return $this->execute();
@@ -696,12 +825,15 @@ class PlurkApp
 		$setting->content = $content;
 		$setting->qualifier = $qualifier;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkResponses($setting);
 		return $this->execute();
 	}
 	
 	/**
-	 * Deletes a response. A user can delete own responses or responses that are posted to own plurks.
+	 * Deletes a response. A user can delete own responses or responses that are posted to own 
+	 * plurks.
 	 * P.S. requires login
 	 * 
 	 * @param	int	$responseId	The id of the response to delete. 
@@ -715,11 +847,13 @@ class PlurkApp
 		$setting->responseId = (int)$responseId;
 		$setting->plurkId = (int)$plurkId;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkResponses($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Search
 	
 	/**
@@ -727,7 +861,8 @@ class PlurkApp
 	 *
 	 * @param	string	$query	The query after Plurks.
 	 * @param	int		$offset	A plurk ID of the oldest Plurk in the last search result.
-	 * @return	mixed			Returns a PlurkPlurkSearchInfo object on success or FALSE on failure.
+	 * @return	mixed			Returns a PlurkPlurkSearchInfo object on success or FALSE on 
+	 * 							failure.
 	 */
 	public function searchPlurk($query, $offset = 0)
 	{
@@ -736,7 +871,9 @@ class PlurkApp
 		$setting->query = (string)$query;
 		$setting->offset = (int)$offset;
 		
-		$this->_strategy = new PlurkResponses($setting);
+		$this->setupAuthSettings($setting);
+		
+		$this->_strategy = new PlurkSearch($setting);
 		return $this->execute();
 	}
 	
@@ -754,19 +891,21 @@ class PlurkApp
 		$setting->query = (string)$query;
 		$setting->offset = (int)$offset;
 		
-		$this->_strategy = new PlurkResponses($setting);
+		$this->setupAuthSettings($setting);
+		
+		$this->_strategy = new PlurkSearch($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Timeline
 	
 	/**
 	 * Gets a plurk.
 	 * P.S. requires login
 	 *
-	 * @param	int	$plurkId	The unique id of the plurk. Should be passed as a number, and not base 36
-	 * 							encoded.
+	 * @param	int	$plurkId	The unique id of the plurk. Should be passed as a number, and not 
+	 * 							base 36 encoded.
 	 * @return	mixed			Returns a PlurkPlurkInfo object on success or FALSE on failure.
 	 */
 	public function getPlurk($plurkId)
@@ -774,6 +913,8 @@ class PlurkApp
 		$setting = new PlurkTimelineSetting();
 		$setting->type = PlurkTimelineSetting::TYPE_GET_PLURK;
 		$setting->plurkId = (int)$plurkId;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
@@ -783,13 +924,14 @@ class PlurkApp
 	 * Gets all the plurks and their owners' information.
 	 * P.S. requires login
 	 *
-	 * @param	mixed	$offset	Returns plurks older than $offset. It can be a DataTime object or a string
-	 * 							formatted as 2009-6-20T21:55:34.
+	 * @param	mixed	$offset	Returns plurks older than $offset. It can be a DataTime object or a 
+	 * 							string formatted as 2009-6-20T21:55:34.
 	 * @param	int		$limit	How many plurks should be returned? Default is 20.
-	 * @param	string	$filter	Can be PlurkTimelineSetting::FILTER_USER,
-	 * 							PlurkTimelineSetting::FILTER_RESPONDED, PlurkTimelineSetting::FILTER_PRIVATE
-	 * 							or PlurkTimelineSetting::FILTER_FAVRITE.
-	 * @return	mixed			Returns a PlurkPlurksUsersInfo object on success or FALSE on failure.
+	 * @param	string	$filter	Can be PLURK_TYPE_USER, PLURK_TYPE_RESPONDED, PLURK_TYPE_PRIVATE or 
+	 * 							PLURK_TYPE_FAVRITE.
+	 * @return	mixed			Returns a PlurkPlurksUsersInfo object on success or FALSE on 
+	 * 							failure.
+	 * @see PlurkTimelineSetting
 	 */
 	public function getPlurksWithFilter($offset = 'now', $limit = 20, $filter = NULL)
 	{
@@ -799,6 +941,8 @@ class PlurkApp
 		$setting->limit = (int)$limit;
 		$setting->filter = $filter;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
 	}
@@ -807,17 +951,52 @@ class PlurkApp
 	 * Gets all the unread plurks and their owners' information.
 	 * P.S. requires login
 	 *
-	 * @param	mixed	$offset	Returns plurks older than offset. It can be a DataTime object or a string
-	 * 							formatted as 2009-6-20T21:55:34.
+	 * @param	mixed	$offset	Returns plurks older than offset. It can be a DataTime object or a 
+	 * 							string formatted as 2009-6-20T21:55:34.
 	 * @param	int		$limit	How many plurks should be returned? Default is 20.
-	 * @return	mixed			Returns a PlurkPlurksUsersInfo object on success or FALSE on failure.
+	 * @param	string	$filter	Limit the plurks returned, could be FILTER_MY, FILTER_RESPONDED, 
+	 * 							FILTER_PRIVATE, or FILTER_FAVORITE. (default: FILTER_ALL)
+	 * @return	mixed			Returns a PlurkPlurksUsersInfo object on success or FALSE on 
+	 * 							failure.
+	 * @see PlurkTimelineSetting
 	 */
-	public function getUnreadPlurks($offset = 'now', $limit = 20)
+	public function getUnreadPlurks($offset = 'now', $limit = 20,
+		$filter = PlurkTimelineSetting::FILTER_ALL)
 	{
 		$setting = new PlurkTimelineSetting();
 		$setting->type = PlurkTimelineSetting::TYPE_GET_UNREAD_PLURKS;
 		$setting->offset = $offset;
 		$setting->limit = (int)$limit;
+		$setting->filter = $filter;
+		
+		$this->setupAuthSettings($setting);
+		
+		$this->_strategy = new PlurkTimeline($setting);
+		return $this->execute();
+	}
+	
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param	mixed	$userId	The user_id of the public plurks owner to get. Can be integer 
+	 * 							(like 34) or nick name (like amix). 
+	 * @param	mixed	$offset	Returns plurks older than $offset. It can be a DataTime object or a 
+	 * 							string formatted as 2009-6-20T21:55:34.
+	 * @param	int		$limit	How many plurks should be returned? Default is 20.
+	 * @param	string	$filter	Limit the plurks returned, could be FILTER_MY, FILTER_RESPONDED, 
+	 * 							FILTER_PRIVATE, or FILTER_FAVORITE. (default: FILTER_ALL)
+	 * @return	mixed			Returns a PlurkPlurksUsersInfo object on success or FALSE on 
+	 * 							failure.
+	 */
+	public function getPublicPlurks($userId, $offset = 'now', $limit = 20, $filter = NULL)
+	{
+		$setting = new PlurkTimelineSetting();
+		$setting->userId = $userId;
+		$setting->type = PlurkTimelineSetting::TYPE_GET_PUBLIC_PLURKS;
+		$setting->offset = $offset;
+		$setting->limit = (int)$limit;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
@@ -829,17 +1008,21 @@ class PlurkApp
 	 *
 	 * @param	string	$content		The Plurk's text.
 	 * @param	string	$qualifier		The Plurk's qualifier, e.g. PlurkQualifier::QUALIFIER_SAYS.
-	 * @param	array	$limitedTo		Limit the plurk only to some users (also known as private plurking). It
-	 * 									should be an array of friend ids, e.g. limited_to of array(3,4,66,34)
-	 * 									will only be plurked to these user ids. If it is array(0) then the
-	 * 									Plurk is privatley posted to the poster's friends.
-	 * @param	int		$noComments		If set to 1, then responses are disabled for this plurk. If set to 2,
-	 * 									then only friends can respond to this plurk.
+	 * @param	array	$limitedTo		Limit the plurk only to some users (also known as private 
+	 * 									plurking). It should be an array of friend ids, e.g. 
+	 * 									limited_to of array(3,4,66,34) will only be plurked to these
+	 * 									 user ids. If it is array(0) then the Plurk is privatley 
+	 * 									posted to the poster's friends.
+	 * @param	int		$noComments		If set to 1, then responses are disabled for this plurk. If 
+	 * 									set to 2, then only friends can respond to this plurk.
 	 * @param	string	$lang			The plurk's language. e.g. PlurkTimelineSetting::LANG_EN
-	 * @return	mixed					Returns a PlurkPlurkInfo object on success or FALSE on failure.
+	 * @return	mixed					Returns a PlurkPlurkInfo object on success or FALSE on 
+	 * 									failure.
 	 * @see	PlurkQualifier
+	 * @see PlurkTimelineSetting
 	 */
-	public function plurkAdd($content, $qualifier, array $limitedTo = NULL, $noComments = 0, $lang = NULL)
+	public function plurkAdd($content, $qualifier, array $limitedTo = NULL, $noComments = 0,
+		$lang = NULL)
 	{
 		$setting = new PlurkTimelineSetting();
 		$setting->type = PlurkTimelineSetting::TYPE_PLURK_ADD;
@@ -848,6 +1031,8 @@ class PlurkApp
 		$setting->limitedTo = $limitedTo;
 		$setting->noComments = (int)$noComments;
 		$setting->lang = $lang;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
@@ -865,6 +1050,8 @@ class PlurkApp
 		$setting = new PlurkTimelineSetting();
 		$setting->type = PlurkTimelineSetting::TYPE_PLURK_DELETE;
 		$setting->plurkId = $plurkId;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
@@ -885,6 +1072,8 @@ class PlurkApp
 		$setting->plurkId = $plurkId;
 		$setting->content = $content;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
 	}
@@ -901,6 +1090,8 @@ class PlurkApp
 		$setting = new PlurkTimelineSetting();
 		$setting->type = PlurkTimelineSetting::TYPE_MUTE_PLURKS;
 		$setting->ids = $ids;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
@@ -919,6 +1110,8 @@ class PlurkApp
 		$setting->type = PlurkTimelineSetting::TYPE_UNMUTE_PLURKS;
 		$setting->ids = $ids;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
 	}
@@ -935,6 +1128,8 @@ class PlurkApp
 		$setting = new PlurkTimelineSetting();
 		$setting->type = PlurkTimelineSetting::TYPE_FAVORITE_PLURKS;
 		$setting->ids = $ids;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
@@ -953,6 +1148,8 @@ class PlurkApp
 		$setting->type = PlurkTimelineSetting::TYPE_UNFAVORITE_PLURKS;
 		$setting->ids = $ids;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
 	}
@@ -970,6 +1167,8 @@ class PlurkApp
 		$setting->type = PlurkTimelineSetting::TYPE_MARK_AS_READ;
 		$setting->ids = $ids;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
 	}
@@ -979,7 +1178,8 @@ class PlurkApp
 	 * P.S. requires login
 	 *
 	 * @param	string	$imgPath	Path of the picture.
-	 * @return	mixed				Returns a PlurkPictureInfo object on success or FALSE on failure.
+	 * @return	mixed				Returns a PlurkPictureInfo object on success or FALSE on 
+	 * 								failure.
 	 */
 	public function uploadPicture($imgPath)
 	{
@@ -987,160 +1187,46 @@ class PlurkApp
 		$setting->type = PlurkTimelineSetting::TYPE_UPLOAD_PICTURE;
 		$setting->imgPath = $imgPath;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkTimeline($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// Users
 	
 	/**
-	 * Register a new Plurk account.
-	 *
-	 * @param	string	$nickName	The user's nick name. Should be longer than 3 characters. Should be ASCII.
-	 * 								Nick name can only contain letters, numbers and _.
-	 * @param	string	$fullName	Can't be empty.
-	 * @param	string	$password	Should be longer than 3 characters.
-	 * @param	string	$gender		Should be GENDER_MALE or GENDER_FEMALE.
-	 * @param	mxied	$dob		A DateTime or a string with format: YYYY-MM-DD, example 1985-05-13.
-	 * @param	string	$email		Must be a valid email. (Optional)
-	 * @return	mixed				Returns a PlurkProfileInfo object or TRUE on success, or FALSE on failure.
-	 */
-	public function register($nickName, $fullName, $password, $gender, $dob, $email = NULL)
-	{
-		$setting = new PlurkUsersSetting();
-		$setting->type = PlurkUsersSetting::TYPE_REGISTER;
-		$setting->nickName = $nickName;
-		$setting->fullName = $fullName;
-		$setting->password = $password;
-		$setting->gender = $gender;
-		$setting->dob = $dob;
-		$setting->email = $email;
-		
-		$this->_strategy = new PlurkUsers($setting);
-		return $this->execute();
-	}
-	
-	/**
-	 * Login an already created user. Login creates a session cookie, which can be used to access the other
-	 * methods. On success it returns the data returned by /API/Profile/getOwnProfile.
-	 *
-	 * @param	string	$username	The user's nick name or email.
-	 * @param	string	$password	The user's password.
-	 * @param	bool	$noData		If it's set to TRUE then the common data is not returned. Use this if you
-	 * 								only want to login the user and don't plan to use the data that's supplied
-	 * 								by PlurkProfile::getOwnProfile(). (Optional)
-	 * @return	mixed				Returns a PlurkProfileInfo object or TRUE on success, or FALSE on failure.
-	 */
-	public function login($username, $password, $noData = false)
-	{
-		$setting = new PlurkUsersSetting();
-		$setting->type = PlurkUsersSetting::TYPE_LOGIN;
-		$setting->username = $username;
-		$setting->password = $password;
-		$setting->noData = $noData;
-		
-		$this->_strategy = new PlurkUsers($setting);
-		return $this->execute();
-	}
-	
-	/**
-	 * Logout Plurk.
-	 */
-	public function logout()
-	{
-		$setting = new PlurkUsersSetting();
-		$setting->type = PlurkUsersSetting::TYPE_LOGOUT;
-		
-		$this->_strategy = new PlurkUsers($setting);
-		return $this->execute();
-	}
-	
-	/**
-	 * Update a user's information (such as email, password or privacy).
-	 * P.S. requires login
-	 *
-	 * @param	string	$password		User's current password.
-	 * @param	string	$fullName		Change full name.
-	 * @param	string	$newPassword	Change password.
-	 * @param	string	$email			Change email.
-	 * @param	string	$displayName	User's display name, can be empty and full unicode. Must be shorter
-	 * 									than 15 characters.
-	 * @param	string	$privacy		User's privacy settings. The option can be PRIVACY_WORLD,
-	 * 									PRIVACY_ONLY_FRIENDS or PRIVACY_ONLY_ME.
-	 * @param	mxied	$dob			A DateTime or a string with format: YYYY-MM-DD, example 1985-05-13.
-	 * @return	PlurkUserInfo			Returns a PlurkUserInfo object on success, or FALSE on failure.
-	 */
-	public function update($password, $fullName = NULL, $newPassword = NULL, $email = NULL, $displayName = NULL,
-		$privacy = NULL, $dob = NULL)
-	{
-		$setting = new PlurkUsersSetting();
-		$setting->type = PlurkUsersSetting::TYPE_UPDATE;
-		$setting->password = $password;
-		$setting->fullName = $fullName;
-		$setting->newPassword = $newPassword;
-		$setting->email = $email;
-		$setting->displayName = $displayName;
-		$setting->privacy = $privacy;
-		$setting->dob = $dob;
-		
-		$this->_strategy = new PlurkUsers($setting);
-		return $this->execute();
-	}
-	
-	/**
-	 * Update a user's profile picture.
-	 * P.S. requires login
-	 *
-	 * @param	string	$imgPath	Path of the picture. The picture will be scaled down to 3 versions: big,
-	 * 								medium and small. The optimal size of profile_image should be 195x195
-	 * 								pixels.
-	 * @return	PlurkUserInfo		Returns a PlurkUserInfo object on success, or FALSE on failure.
-	 */
-	public function updatePicture($imgPath)
-	{
-		$setting = new PlurkUsersSetting();
-		$setting->type = PlurkUsersSetting::TYPE_UPDATE_PIC;
-		$setting->imgPath = $imgPath;
-		
-		$this->_strategy = new PlurkUsers($setting);
-		return $this->execute();
-	}
-	
-	/**
-	 * Returns info about a user's karma, including current karma, karma growth, karma graph and the latest
-	 * reason why the karma has dropped. 
+	 * Returns info about a user's karma, including current karma, karma growth, karma graph and 
+	 * the latest reason why the karma has dropped.
+	 * 
+	 * @return	mixed	Returns a PlurkKarmaInfo object on success or FALSE on failure.
 	 */
 	public function getKarmaStats()
 	{
 		$setting = new PlurkUsersSetting();
 		$setting->type = PlurkUsersSetting::TYPE_GET_KARMA_STATS;
 		
+		$this->setupAuthSettings($setting);
+		
 		$this->_strategy = new PlurkUsers($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	// PlutkTop
 	
-	public function getGetCollections()
+	/**
+	 * Gets a list of PlurkTop collections.
+	 *
+	 * @return	mixed	Returns a PlurkCollectionInfo object on success or FALSE on failure.
+	 */
+	public function getCollections()
 	{
 		$setting = new PlurkTopSetting();
 		$setting->type = PlurkTopSetting::TYPE_GET_COLLECTIONS;
 		
-		$this->_strategy = new PlurkTop($setting);
-		return $this->execute();
-	}
-	
-	/**
-	 * Gets default name of collection for current user.
-	 *
-	 * @return	mixed	Returns a string on success or FALSE on failure.
-	 */
-	public function getDefaultCollection()
-	{
-		$setting = new PlurkTopSetting();
-		$setting->type = PlurkTopSetting::TYPE_GET_DEFAULT_COLLECTION;
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkTop($setting);
 		return $this->execute();
@@ -1149,24 +1235,31 @@ class PlurkApp
 	/**
 	 * Gets plurks in PlurkTop
 	 * 
-	 * @param	float	Offset of Plurks in PlurkTop, e.g. 0.99.
-	 * @param	sorting	The way to sort plurks in PlurkTop, can be PlurkTopSetting::SORTING_HOT for
-	 * 					sorting by popularity or PlurkTopSetting::SORTING_NEW for posted time.  
-	 * @return	mixed	Returns a PlurkPlurksUsersOffsetInfo object on success or FALSE on failure.
+	 * @param	string	$collectionName	Only get plurks in specified collection.
+	 * @param	float	$offset			Offset of Plurks in PlurkTop, e.g. 0.99.
+	 * @param	int		$limit			Number of plurks returned (default: 30) 
+	 * @param	string	sorting			The way to sort plurks in PlurkTop, can be SORTING_HOT for 
+	 * 									sorting by popularity or PlurkTopSetting::SORTING_NEW for 
+	 * 									posted time.  
+	 * @return	mixed					Returns a PlurkPlurksUsersOffsetInfo object on success or 
+	 * 									FALSE on failure.
+	 * @see PlurkTopSetting
 	 */
-	public function getTopPlurks($offset = NULL, $sorting = NULL)
+	public function getTopPlurks($collectionName, $offset = NULL, $limit = 30, $sorting = NULL)
 	{
 		$setting = new PlurkTopSetting();
 		$setting->type = PlurkTopSetting::TYPE_GET_PLURKS;
-		
+		$setting->collectionName = $collectionName;
 		$setting->offset = $offset;
 		$setting->sorting = $sorting;
+		
+		$this->setupAuthSettings($setting);
 		
 		$this->_strategy = new PlurkTop($setting);
 		return $this->execute();
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	/**
 	 * Execute the selected strategy.
@@ -1181,8 +1274,6 @@ class PlurkApp
 			throw new PlurkException('Invalid strategy object.');
 		}
 		
-		$this->_strategy->setApiKey($this->_apiKey);
-		$this->_strategy->setCookiePath($this->_cookiePath);
 		$context = new PlurkContext($this->_strategy);
 		
 		try
@@ -1203,6 +1294,19 @@ class PlurkApp
 		}
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	/**
+	 * Setup the setting for authorization.
+	 * 
+	 * @param PlurkOAuthSetting $setting	The setting object.
+	 */
+	private function setupAuthSettings(PlurkOAuthSetting $setting)
+	{
+		$setting->consumerKey = $this->_consumerKey;
+		$setting->consumerSecret = $this->_consumerSecret;
+		$setting->oAuthToken = $this->_oAuthToken;
+		$setting->oAuthTokenSecret = $this->_oAuthTokenSecret;
+	}
+	
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

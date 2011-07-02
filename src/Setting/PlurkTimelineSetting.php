@@ -8,13 +8,13 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
 require_once('PlurkSetting.php');
 
-class PlurkTimelineSetting extends PlurkSetting
+class PlurkTimelineSetting extends PlurkOAuthSetting
 {
 	const TYPE_GET_PLURK = 1;
 	const TYPE_GET_PLURKS = 2;
@@ -28,11 +28,18 @@ class PlurkTimelineSetting extends PlurkSetting
 	const TYPE_UNFAVORITE_PLURKS = 10;
 	const TYPE_MARK_AS_READ = 11;
 	const TYPE_UPLOAD_PICTURE = 12;
+	const TYPE_GET_PUBLIC_PLURKS = 13;
 	
-	const FILTER_USER = 'only_user';
-	const FILTER_RESPONDED = 'only_responded';
-	const FILTER_PRIVATE = 'only_private';
-	const FILTER_FAVRITE = 'only_favorite';
+	const PLURK_TYPE_USER = 'only_user';
+	const PLURK_TYPE_RESPONDED = 'only_responded';
+	const PLURK_TYPE_PRIVATE = 'only_private';
+	const PLURK_TYPE_FAVRITE = 'only_favorite';
+	
+	const FILTER_ALL = 'all';
+	const FILTER_MY = 'my';
+	const FILTER_RESPONDED = 'responded';
+	const FILTER_PRIVATE = 'private';
+	const FILTER_FAVORITE = 'favorite';
 	
 	const LANG_EN = 'en';
 	const LANG_PT_BR = 'pt_BR';
@@ -78,6 +85,7 @@ class PlurkTimelineSetting extends PlurkSetting
 	public $lang;
 	public $ids;
 	public $imgPath;
+	public $userId;
 	
 	public function __construct()
 	{

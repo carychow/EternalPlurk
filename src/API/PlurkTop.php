@@ -8,21 +8,21 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0.1
  */
 
 require_once(dirname(__FILE__) . '/../Setting/PlurkTopSetting.php');
-require_once('PlurkBase.php');
+require_once('PlurkOAuth.php');
 
 /**
  * Profile resources of Plurk API.
  *
  * @link	http://www.plurk.com/API#plurk_top
  */
-class PlurkTop extends PlurkBase
+class PlurkTop extends PlurkOAuth
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkTopSetting $setting)
 	{
@@ -33,38 +33,24 @@ class PlurkTop extends PlurkBase
 	{
 		switch($this->_setting->type)
 		{
-			case PlurkTopSetting::TYPE_GET_COLLECTIONS:			return $this->getGetCollections();
-			case PlurkTopSetting::TYPE_GET_DEFAULT_COLLECTION:	return $this->getDefaultCollection();
+			case PlurkTopSetting::TYPE_GET_COLLECTIONS:			return $this->getCollections();
 			case PlurkTopSetting::TYPE_GET_PLURKS:				return $this->getPlurks();
 			default:											return false;
 		}
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Gets a list of PlurkTop collections.
 	 *
-	 * @return	mixed	Returns a PlurkTopInfo object on success or FALSE on failure.
+	 * @return	mixed	Returns an array of PlurkCollectionInfo on success or FALSE on failure.
 	 */
-	private function getGetCollections()
+	private function getCollections()
 	{
 		$url = sprintf('%sPlurkTop/getCollections', self::HTTP_URL);
 
 		$this->setResultType(PlurkResponseParser::RESULT_COLLECTIONS);
-		return $this->sendRequest($url);
-	}
-
-	/**
-	 * Gets default name of collection for current user.
-	 *
-	 * @return	mixed	Returns a string on success or FALSE on failure.
-	 */
-	private function getDefaultCollection()
-	{
-		$url = sprintf('%sPlurkTop/getDefaultCollection', self::HTTP_URL);
-
-		$this->setResultType(PlurkResponseParser::RESULT_DEF_COLLECTION);
 		return $this->sendRequest($url);
 	}
 	
@@ -76,7 +62,7 @@ class PlurkTop extends PlurkBase
 	private function getPlurks()
 	{
 		$url = sprintf('%sPlurkTop/getPlurks', self::HTTP_URL);
-		$args = array();
+		$args = array('collection_name'=>$this->_setting->collectionName);
 		
 		if(!is_null($this->_setting->offset))
 		{
@@ -92,6 +78,6 @@ class PlurkTop extends PlurkBase
 		return $this->sendRequest($url, $args);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

@@ -8,13 +8,13 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
-require_once('PlurkSetting.php');
+require_once('PlurkOAuthSetting.php');
 
-class PlurkPollingSetting extends PlurkSetting
+class PlurkPollingSetting extends PlurkOAuthSetting
 {
 	const TYPE_GET_PLURKS = 1;
 	const TYPE_GET_UNREAD_COUNT = 2;

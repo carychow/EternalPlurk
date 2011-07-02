@@ -8,21 +8,21 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
 require_once(dirname(__FILE__) . '/../Setting/PlurkFriendsFansSetting.php');
-require_once('PlurkBase.php');
+require_once('PlurkOAuth.php');
 
 /**
  * Friends and Fans resources of Plurk API.
  *
  * @link	http://www.plurk.com/API#following
  */
-class PlurkFriendsFans extends PlurkBase
+class PlurkFriendsFans extends PlurkOAuth
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkFriendsFansSetting $setting)
 	{
@@ -45,7 +45,7 @@ class PlurkFriendsFans extends PlurkBase
 		}		
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Returns user's friend list in chucks of 10 friends at a time.
@@ -56,8 +56,9 @@ class PlurkFriendsFans extends PlurkBase
 	{
 		$url = sprintf('%sFriendsFans/getFriendsByOffset', self::HTTP_URL);
 		$args = array(
-			'user_id'	=>	$this->_setting->userId,
-			'offset'	=>	$this->_setting->offset
+			'user_id'	=> $this->_setting->userId,
+			'offset'	=> (int)$this->_setting->offset,
+			'limit'		=> (int)$this->_setting->limit
 		);
 
 		$this->setResultType(PlurkResponseParser::RESULT_USERS);
@@ -73,8 +74,9 @@ class PlurkFriendsFans extends PlurkBase
 	{
 		$url = sprintf('%sFriendsFans/getFansByOffset', self::HTTP_URL);
 		$args = array(
-			'user_id'	=>	$this->_setting->userId,
-			'offset'	=>	$this->_setting->offset
+			'user_id'	=> $this->_setting->userId,
+			'offset'	=> (int)$this->_setting->offset,
+			'limit'		=> (int)$this->_setting->limit
 		);
 
 		$this->setResultType(PlurkResponseParser::RESULT_USERS);
@@ -90,7 +92,10 @@ class PlurkFriendsFans extends PlurkBase
 	private function getFollowingByOffset()
 	{
 		$url = sprintf('%sFriendsFans/getFollowingByOffset', self::HTTP_URL);
-		$args = array('offset' => $this->_setting->offset);
+		$args = array(
+			'offset'	=> (int)$this->_setting->offset,
+			'limit'		=> (int)$this->_setting->limit
+		);
 
 		$this->setResultType(PlurkResponseParser::RESULT_USERS);
 		return $this->sendRequest($url, $args);
@@ -173,6 +178,6 @@ class PlurkFriendsFans extends PlurkBase
 		return $this->sendRequest($url);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

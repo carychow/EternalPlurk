@@ -8,13 +8,13 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0.1
  */
 
-require_once('PlurkSetting.php');
+require_once('PlurkOAuthSetting.php');
 
-class PlurkTopSetting extends PlurkSetting
+class PlurkTopSetting extends PlurkOAuthSetting
 {
 	const SORTING_HOT = 0;
 	const SORTING_NEW = 1;
@@ -23,6 +23,7 @@ class PlurkTopSetting extends PlurkSetting
 	const TYPE_GET_DEFAULT_COLLECTION = 2;
 	const TYPE_GET_PLURKS = 3;
 	
+	public $collectionName;
 	public $offset;
 	public $sorting;
 }

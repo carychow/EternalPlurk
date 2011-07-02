@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
@@ -17,23 +17,23 @@
  */
 interface PlurkStrategy
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * URL of Plurk API via HTTP.
 	 *
 	 * @var	string
 	 */
-	const HTTP_URL = 'http://www.plurk.com/API/';
+	const HTTP_URL = 'http://www.plurk.com/APP/';
 
 	/**
 	 * URL of Plurk API via HTTPS.
 	 *
 	 * @var	string
 	 */
-	const HTTPS_URL = 'https://www.plurk.com/API/';
+	const HTTPS_URL = 'https://www.plurk.com/APP/';
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Gets the error message
@@ -49,6 +49,6 @@ interface PlurkStrategy
 	 */
 	public function execute();
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

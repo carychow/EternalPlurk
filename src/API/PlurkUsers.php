@@ -8,21 +8,21 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
 require_once(dirname(__FILE__) . '/../Setting/PlurkUsersSetting.php');
-require_once('PlurkBase.php');
+require_once('PlurkOAuth.php');
 
 /**
  * Users resources of Plurk API.
  *
  * @link	http://www.plurk.com/API#users
  */
-class PlurkUsers extends PlurkBase
+class PlurkUsers extends PlurkOAuth
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkUsersSetting $setting)
 	{
@@ -43,7 +43,7 @@ class PlurkUsers extends PlurkBase
 		}		
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Register a new Plurk account.
@@ -183,6 +183,6 @@ class PlurkUsers extends PlurkBase
 		return $this->sendRequest($url);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

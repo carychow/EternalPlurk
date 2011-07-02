@@ -9,26 +9,37 @@
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
  * @version		2.0
- * @since		1.0
+ * @since		2.0
  */
 
-/**
- * The base class of all Plurk exceptions.
- */
-class PlurkException extends Exception
+require_once('PlurkSetting.php');
+
+class PlurkOAuthSetting extends PlurkSetting
 {
 	// ------------------------------------------------------------------------------------------ //
-
+	
+	const TYPE_START_AUTH = -1;
+	const TYPE_PARSE_CALLBACK = -2;
+	
+	// ------------------------------------------------------------------------------------------ //
+	
 	/**
-	 * Creates a new PlurkException object.
+	 * Consumer key.
 	 * 
-	 * @param	string	$msg	Error message.
+	 * @var	string
 	 */
-	public function __construct($msg = '')
-	{
-		parent::__construct($msg);
-	}
-
+	public $consumerKey;
+	
+	/**
+	 * Consumer secret.
+	 * 
+	 * @var	string
+	 */
+	public $consumerSecret;
+	
+	public $oAuthToken;
+	public $oAuthTokenSecret;
+	
 	// ------------------------------------------------------------------------------------------ //
 }
 ?>

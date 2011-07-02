@@ -9,19 +9,12 @@
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
  * @version		2.0
- * @since		1.0
+ * @since		2.0
  */
 
-class PlurkUnreadCountInfo
+class PlurkEmoticonInfo
 {
-	const KEY_ALL = 'all';
-	const KEY_MY = 'my';
-	const KEY_RESPONDED = 'responded';
-	const KEY_PRIVATE = 'private';
-	
-	public $all;
-	public $my;
-	public $responded;
-	public $private;
+	public $code;
+	public $url;
 }
 ?>

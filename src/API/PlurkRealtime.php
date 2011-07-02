@@ -8,21 +8,21 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
 require_once(dirname(__FILE__) . '/../Setting/PlurkRealtimeSetting.php');
-require_once('PlurkBase.php');
+require_once('PlurkOAuth.php');
 
 /**
  * Real time notifications resources of Plurk API.
  *
  * @link	http://www.plurk.com/API#realtime
  */
-class PlurkRealtime extends PlurkBase
+class PlurkRealtime extends PlurkOAuth
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkRealtimeSetting $setting)
 	{
@@ -39,7 +39,7 @@ class PlurkRealtime extends PlurkBase
 		}		
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Get instant notifications when there are new plurks and responses on a user's timeline. This is much more
@@ -76,6 +76,6 @@ class PlurkRealtime extends PlurkBase
 		return $this->sendRequest($url, $args, false);	//GET request
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

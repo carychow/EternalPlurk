@@ -8,21 +8,21 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
 require_once(dirname(__FILE__) . '/../Setting/PlurkBlocksSetting.php');
-require_once('PlurkBase.php');
+require_once('PlurkOAuth.php');
 
 /**
  * Blocks resources of Plurk API.
  *
  * @link	http://www.plurk.com/API#blocks
  */
-class PlurkBlocks extends PlurkBase
+class PlurkBlocks extends PlurkOAuth
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkBlocksSetting $setting)
 	{
@@ -33,14 +33,14 @@ class PlurkBlocks extends PlurkBase
 	{
 		switch($this->_setting->type)
 		{
-			case PlurkBlocksSetting::TYPE_GET:	return $this->get();
-			case PlurkBlocksSetting::TYPE_GET:	return $this->block();
-			case PlurkBlocksSetting::TYPE_GET:	return $this->unblock();
+			case PlurkBlocksSetting::TYPE_GET:		return $this->get();
+			case PlurkBlocksSetting::TYPE_BLOCK:	return $this->block();
+			case PlurkBlocksSetting::TYPE_UNBLOCK:	return $this->unblock();
 			default:								return false;
 		}		
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Gets a list of users that are blocked by the current user.
@@ -53,7 +53,7 @@ class PlurkBlocks extends PlurkBase
 		$url = sprintf('%sBlocks/get', self::HTTP_URL);
 		$args = array('offset' => $this->_setting->offset);
 
-		$this->setResultType(PlurkResponseParser::RESUTL_BLOCK);
+		$this->setResultType(PlurkResponseParser::RESULT_BLOCK);
 		return $this->sendRequest($url, $args);
 	}
 
@@ -87,6 +87,6 @@ class PlurkBlocks extends PlurkBase
 		return $this->sendRequest($url, $args);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

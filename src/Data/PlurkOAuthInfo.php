@@ -9,26 +9,24 @@
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
  * @version		2.0
- * @since		1.0
+ * @since		2.0
  */
 
 /**
- * The base class of all Plurk exceptions.
+ * A OAuth (Open Authorization) information for Plurk.
  */
-class PlurkException extends Exception
+class PlurkOAuthInfo
 {
 	// ------------------------------------------------------------------------------------------ //
 
-	/**
-	 * Creates a new PlurkException object.
-	 * 
-	 * @param	string	$msg	Error message.
-	 */
-	public function __construct($msg = '')
-	{
-		parent::__construct($msg);
-	}
+	public $consumerKey;
+	public $consumerSecret;
+	public $oAuthToken;
+	public $oAuthTokenSecret;
+	
+	public $_userId;
 
 	// ------------------------------------------------------------------------------------------ //
 }
+
 ?>

@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
@@ -19,7 +19,7 @@ require_once('Data/main.php');
  */
 class PlurkResponseParser
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	/**
 	 * Result is string.
@@ -189,7 +189,7 @@ class PlurkResponseParser
 	 */
 	const RESULT_PLURKS_USERS_OFFSET = 23;
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Error message of the response.
@@ -198,7 +198,7 @@ class PlurkResponseParser
 	 */
 	private $_errMsg;
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Gets the error message.
@@ -285,7 +285,7 @@ class PlurkResponseParser
 		}
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Parse an alert by JSON.
@@ -344,7 +344,7 @@ class PlurkResponseParser
 	{
 		$info = new PlurkBlockInfo();
 		$info->total	= (int)$jsonAry[PlurkBlockInfo::KEY_TOTAL];
-		$info->users	= $this->parseUsers($jsonAry[PlurkBlockInfo::KEY_TOTAL]);
+		$info->users	= $this->parseUsers($jsonAry[PlurkBlockInfo::KEY_USERS]);
 		return $info;
 	}
 
@@ -446,7 +446,7 @@ class PlurkResponseParser
 	 * Parse the collections by JSON.
 	 *
 	 * @param	array	$jsonAry	A JSON decoded array.
-	 * @return	PlurkCollectionInfo	Returns a PlurkCollectionInfo object.
+	 * @return	PlurkCollectionInfo	Returns an array of PlurkCollectionInfo.
 	 */
 	protected function parseCollections(array $jsonAry)
 	{
@@ -462,6 +462,24 @@ class PlurkResponseParser
 		}
 		
 		return $collections;
+	}
+	
+	protected function parseEmoticon(array $jsonAry)
+	{
+		$catAry = array();
+		
+		foreach($jsonAry as $threshold => $emoticonAry)
+		{
+			foreach($emoticonAry as $emoticon)
+			{
+				$info = new PlurkEmoticonInfo();
+				$info->code = $emoticon[0];
+				$info->url = $emoticon[1];
+				$catAry[$threshold][] = $info;
+			}
+		}
+		
+		return $catAry;
 	}
 
 	/**
@@ -545,7 +563,7 @@ class PlurkResponseParser
 		$info->voteDown				= (int)$plurkAry[PlurkPlurkInfo::KEY_VOTE_DOWN];
 		$info->voteUp				= (int)$plurkAry[PlurkPlurkInfo::KEY_VOTE_UP];
 		$info->voteUser				= (int)$plurkAry[PlurkPlurkInfo::KEY_VOTE_USER];
-		$info->id					= (int)$plurkAry[PlurkPlurkInfo::KEY_ID];
+		$info->id					= (float)$plurkAry[PlurkPlurkInfo::KEY_ID];
 		return $info;
 	}
 
@@ -742,6 +760,6 @@ class PlurkResponseParser
 		return $users;
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

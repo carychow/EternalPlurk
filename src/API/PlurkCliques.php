@@ -8,21 +8,21 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
 require_once(dirname(__FILE__) . '/../Setting/PlurkCliquesSetting.php');
-require_once('PlurkBase.php');
+require_once('PlurkOAuth.php');
 
 /**
  * Cliques resources of Plurk API.
  *
  * @link	http://www.plurk.com/API#cliques
  */
-class PlurkCliques extends PlurkBase
+class PlurkCliques extends PlurkOAuth
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkCliquesSetting $setting)
 	{
@@ -33,13 +33,16 @@ class PlurkCliques extends PlurkBase
 	{
 		switch($this->_setting->type)
 		{
-			case PlurkCliquesSetting::TYPE_GET:	return $this->get();
-			case PlurkCliquesSetting::TYPE_GET:	return $this->block();
-			case PlurkCliquesSetting::TYPE_GET:	return $this->unblock();
+			case PlurkCliquesSetting::TYPE_GET_CLIQUES:		return $this->getCliques();
+			case PlurkCliquesSetting::TYPE_GET_CLIQUE:		return $this->getClique();
+			case PlurkCliquesSetting::TYPE_CREATE_CLIQUE:	return $this->createClique();
+			case PlurkCliquesSetting::TYPE_RENAME_CLIQUE:	return $this->renameClique();
+			case PlurkCliquesSetting::TYPE_ADD:				return $this->add();
+			case PlurkCliquesSetting::TYPE_REMOVE:			return $this->remove();
 			default:							return false;
 		}		
 	}
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Gets user's current cliques.
@@ -139,6 +142,6 @@ class PlurkCliques extends PlurkBase
 		return $this->sendRequest($url, $args);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

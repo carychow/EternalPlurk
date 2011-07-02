@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		2.0
  * @since		1.0
  */
 
@@ -21,7 +21,7 @@ require_once(dirname(__FILE__) . '/../PlurkStrategy.php');
  */
 abstract class PlurkBase implements PlurkStrategy
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Setting (parameters) of the request.
@@ -29,22 +29,15 @@ abstract class PlurkBase implements PlurkStrategy
 	 * @var PlurkSetting
 	 */
 	protected $_setting;
-
-	// ------------------------------------------------------------------------------------------------------ //
-
-	/**
-	 * API key for the Plurk API.
-	 *
-	 * @var	string
-	 */
-	private $_apiKey;
-
+	
 	/**
 	 * Error message of the response.
 	 *
 	 * @var	string
 	 */
-	private $_errMsg;
+	protected $_errMsg;
+	
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Type of the result.
@@ -53,14 +46,7 @@ abstract class PlurkBase implements PlurkStrategy
 	 */
 	private $_resultType;
 
-	/**
-	 * The path of cookie files.
-	 *
-	 * @var	string
-	 */
-	private $_cookiePath;
-
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Creates a new PlurkBase object.
@@ -70,16 +56,6 @@ abstract class PlurkBase implements PlurkStrategy
 	public function __construct(PlurkSetting $setting)
 	{
 		$this->_setting = $setting;
-	}
-
-	/**
-	 * Sets the Plurk API key.
-	 *
-	 * @param	string	$apiKey	Your Plurk API key.
-	 */
-	public function setApiKey($apiKey)
-	{
-		$this->_apiKey = $apiKey;
 	}
 
 	/**
@@ -104,31 +80,16 @@ abstract class PlurkBase implements PlurkStrategy
 	}
 
 	/**
-	 * Sets the path Cookie file. It must be set if the method requires login.
-	 * Note that it will overwirte the exist file with same name.
-	 *
-	 * @param	string	$cookiePath	The path of cookie files.
-	 */
-	public function setCookiePath($cookiePath)
-	{
-		$this->_cookiePath = $cookiePath;
-	}
-
-	/**
 	 *
 	 * @param	string	$url	URL of the request.
 	 * @param	array	$args	Arguments of the request.
 	 * @param	bool	$isPost	TRUE on sending request by POST otherwise FALSE.
+	 * @param	array	$header	Addtional HTTP header fields to set.
 	 * @return	mixed			An object of different success result or FALSE on failure.
-	 * @exception	PlurkException	If API key is empty or get error on response.
+	 * @exception	PlurkException	If get error on response.
 	 */
-	public function sendRequest($url, array $args = array(), $isPost = true)
+	public function sendRequest($url, array $args = array(), $isPost = true, array $headers = array())
 	{
-		if(empty($this->_apiKey))
-		{
-			throw new PlurkException('Please set your Plurk API key.');
-		}
-
 		$isHttp = (preg_match('|^(http://)|i', $url) > 0);
 
 		// Options for cURL transfer
@@ -143,7 +104,7 @@ abstract class PlurkBase implements PlurkStrategy
 			CURLOPT_CONNECTTIMEOUT	=>	120,		// timeout on connect
 			CURLOPT_MAXREDIRS		=>	10,     	// stop after 10 redirects
 			CURLOPT_TIMEOUT			=>	120,		// timeout on response
-			CURLOPT_HTTPHEADER		=>	array('Expect:'),
+			CURLINFO_HEADER_OUT		=>	false,		// Do not track the handle's request string.
 		);
 		
 		$openBaseDir = ini_get('open_basedir');
@@ -153,19 +114,16 @@ abstract class PlurkBase implements PlurkStrategy
 			$options[CURLOPT_FOLLOWLOCATION] = true;	// Follow redirects
 		}
 		
+		if(!empty($headers))
+		{
+			$options[CURLOPT_HTTPHEADER] = $headers;	// HTTP headers
+		}
+		
 		if($isPost)
 		{
 			// Do a regular HTTP POST.
-			$args['api_key'] = $this->_apiKey;
-
 			$options[CURLOPT_POST] = true;
 			$options[CURLOPT_POSTFIELDS] = $args;
-		}
-
-		if(!empty($this->_cookiePath))
-		{
-			$options[CURLOPT_COOKIEFILE] = $this->_cookiePath;
-			$options[CURLOPT_COOKIEJAR] = $this->_cookiePath;
 		}
 
 		// Initialize cURL
@@ -189,7 +147,6 @@ abstract class PlurkBase implements PlurkStrategy
 		$this->_httpCode = (int)$responseInfo['http_code'];
 
 		// Make sure we received a response from Plurk
-
 		if(empty($response))
 		{
 			throw new PlurkException('Empty response.');
@@ -208,6 +165,6 @@ abstract class PlurkBase implements PlurkStrategy
 		return $result;
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>
