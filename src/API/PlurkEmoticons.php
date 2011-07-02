@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		1.0.2
  * @since		1.0
  */
 
@@ -22,7 +22,7 @@ require_once('PlurkBase.php');
  */
 class PlurkEmoticons extends PlurkBase
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkEmoticonsSetting $setting)
 	{
@@ -38,7 +38,7 @@ class PlurkEmoticons extends PlurkBase
 		}		
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Emoticons are a big part of Plurk since they make it easy to express feelings.
@@ -54,6 +54,6 @@ class PlurkEmoticons extends PlurkBase
 		return $this->sendRequest($url);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

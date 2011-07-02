@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0.1
+ * @version		1.0.2
  * @since		1.0
  */
 
@@ -82,7 +82,7 @@ class PlurkPlurkInfo
 	/**
 	 * Uses for response only. It is a response ID.
 	 * 
-	 * @var	int
+	 * @var	float
 	 */
 	public $id;
 }

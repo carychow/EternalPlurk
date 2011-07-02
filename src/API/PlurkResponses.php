@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		1.0.2
  * @since		1.0
  */
 
@@ -22,7 +22,7 @@ require_once('PlurkBase.php');
  */
 class PlurkResponses extends PlurkBase
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkResponsesSetting $setting)
 	{
@@ -40,7 +40,7 @@ class PlurkResponses extends PlurkBase
 		}
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Fetches responses for plurk with plurk id and some basic info about the users.
@@ -96,6 +96,6 @@ class PlurkResponses extends PlurkBase
 		return $this->sendRequest($url, $args);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		1.0.2
  * @since		1.0.1
  */
 
@@ -22,7 +22,7 @@ require_once('PlurkBase.php');
  */
 class PlurkTop extends PlurkBase
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkTopSetting $setting)
 	{
@@ -33,21 +33,21 @@ class PlurkTop extends PlurkBase
 	{
 		switch($this->_setting->type)
 		{
-			case PlurkTopSetting::TYPE_GET_COLLECTIONS:			return $this->getGetCollections();
+			case PlurkTopSetting::TYPE_GET_COLLECTIONS:			return $this->getCollections();
 			case PlurkTopSetting::TYPE_GET_DEFAULT_COLLECTION:	return $this->getDefaultCollection();
 			case PlurkTopSetting::TYPE_GET_PLURKS:				return $this->getPlurks();
 			default:											return false;
 		}
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Gets a list of PlurkTop collections.
 	 *
-	 * @return	mixed	Returns a PlurkTopInfo object on success or FALSE on failure.
+	 * @return	mixed	Returns an array of PlurkCollectionInfo on success or FALSE on failure.
 	 */
-	private function getGetCollections()
+	private function getCollections()
 	{
 		$url = sprintf('%sPlurkTop/getCollections', self::HTTP_URL);
 
@@ -92,6 +92,6 @@ class PlurkTop extends PlurkBase
 		return $this->sendRequest($url, $args);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0.1
+ * @version		1.0.2
  * @since		1.0
  */
 
@@ -22,7 +22,7 @@ require_once('PlurkBase.php');
  */
 class PlurkProfile extends PlurkBase
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkProfileSetting $setting)
 	{
@@ -39,7 +39,7 @@ class PlurkProfile extends PlurkBase
 		}
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Returns data that's private for the currently logged in user. This can be used to construct a profile
@@ -71,6 +71,6 @@ class PlurkProfile extends PlurkBase
 		return $this->sendRequest($url, $args);
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

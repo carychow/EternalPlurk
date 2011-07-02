@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		1.0.2
  * @since		1.0
  */
 
@@ -22,7 +22,7 @@ require_once('PlurkBase.php');
  */
 class PlurkTimeline extends PlurkBase
 {	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkTimelineSetting $setting)
 	{
@@ -45,11 +45,12 @@ class PlurkTimeline extends PlurkBase
 			case PlurkTimelineSetting::TYPE_UNFAVORITE_PLURKS:	return $this->unfavoritePlurks();
 			case PlurkTimelineSetting::TYPE_MARK_AS_READ:		return $this->markAsRead();
 			case PlurkTimelineSetting::TYPE_UPLOAD_PICTURE:		return $this->uploadPicture();
+			case PlurkTimelineSetting::TYPE_GET_PUBLIC_PLURKS:	return $this->getPublicPlurks();
 			default:											return false;
 		}		
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 
 	/**
 	 * Gets a plurk.
@@ -103,8 +104,9 @@ class PlurkTimeline extends PlurkBase
 		$offset = $this->_setting->offset;
 		$time = ($offset instanceof DateTime) ? $offset : new DateTime($offset);
 		$args = array(
-			'offset'	=>	$time->format('Y-m-d\TH:i:s'),
-			'limit'		=>	$this->_setting->limit
+			'offset'	=> $time->format('Y-m-d\TH:i:s'),
+			'limit'		=> $this->_setting->limit,
+			'filter'	=> $this->_setting->filter
 		);
 
 		$this->setResultType(PlurkResponseParser::RESULT_PLURKS_USERS);
@@ -260,13 +262,31 @@ class PlurkTimeline extends PlurkBase
 	 */
 	private function uploadPicture()
 	{
-		$url = sprintf('%sUsers/uploadPicture', self::HTTP_URL);
+		$url = sprintf('%sTimeline/uploadPicture', self::HTTP_URL);
 		$args = array('image' => '@' . $this->_setting->imgPath);
 
 		$this->setResultType(PlurkResponseParser::RESULT_PICTURE);
 		return $this->sendRequest($url, $args);
 	}
+	
+	/**
+	 * Gets public plurks from a user.
+	 */
+	private function getPublicPlurks()
+	{
+		$url = sprintf('%sTimeline/getPublicPlurks', self::HTTP_URL);
+		$offset = $this->_setting->offset;
+		$time = ($offset instanceof DateTime) ? $offset : new DateTime($offset);
+		$args = array(
+			'user_id'	=> $this->_setting->userId,
+			'offset'	=> $time->format('Y-m-d\TH:i:s'),
+			'limit'		=> $this->_setting->limit
+		);
 
-	// ------------------------------------------------------------------------------------------------------ //
+		$this->setResultType(PlurkResponseParser::RESULT_PLURKS_USERS);
+		return $this->sendRequest($url, $args);
+	}
+
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

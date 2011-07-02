@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		1.0.2
  * @since		1.0
  */
 
@@ -22,7 +22,7 @@ require_once('PlurkBase.php');
  */
 class PlurkPolling extends PlurkBase
 {
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	public function __construct(PlurkPollingSetting $setting)
 	{
@@ -39,7 +39,7 @@ class PlurkPolling extends PlurkBase
 		}		
 	}
 
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 	
 	/**
 	 * You should use this call to find out if there any new plurks posted to the user's timeline. It's much 
@@ -79,6 +79,6 @@ class PlurkPolling extends PlurkBase
 		return $this->sendRequest($url);
 	}
 	
-	// ------------------------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------ //
 }
 ?>

@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0.1
+ * @version		1.0.2
  * @since		1.0
  */
 
@@ -18,6 +18,7 @@ require_once('PlurkChannelCometInfo.php');
 require_once('PlurkChannelDataInfo.php');
 require_once('PlurkChannelUserInfo.php');
 require_once('PlurkCollectionInfo.php');
+require_once('PlurkEmoticonInfo.php');
 require_once('PlurkEmoticonsInfo.php');
 require_once('PlurkKarmaInfo.php');
 require_once('PlurkPictureInfo.php');

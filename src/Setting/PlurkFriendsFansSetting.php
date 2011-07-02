@@ -8,7 +8,7 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		1.0
+ * @version		1.0.2
  * @since		1.0
  */
 
@@ -30,6 +30,7 @@ class PlurkFriendsFansSetting extends PlurkSetting
 	public $friendId;
 	public $fanId;
 	public $follow;
+	public $limit;
 	
 	public function __construct()
 	{
