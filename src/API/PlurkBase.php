@@ -45,6 +45,13 @@ abstract class PlurkBase implements PlurkStrategy
 	 * @var	int
 	 */
 	private $_resultType;
+	
+	/**
+	 * HTTP code of response.
+	 * 
+	 * @var int
+	 */
+	private $_httpCode;
 
 	// ------------------------------------------------------------------------------------------ //
 
@@ -56,6 +63,7 @@ abstract class PlurkBase implements PlurkStrategy
 	public function __construct(PlurkSetting $setting)
 	{
 		$this->_setting = $setting;
+		$this->_httpCode = 0;
 	}
 
 	/**
@@ -78,6 +86,16 @@ abstract class PlurkBase implements PlurkStrategy
 	{
 		$this->_resultType = (int)$resultType;
 	}
+	
+	/**
+	 * Gets HTTP code of response.
+	 * 
+	 * @return int The HTTP code of response. Default is 0 if request failed.
+	 */
+	public function getHttpCode()
+	{
+		return $this->_httpCode;
+	}
 
 	/**
 	 *
@@ -90,6 +108,7 @@ abstract class PlurkBase implements PlurkStrategy
 	 */
 	public function sendRequest($url, array $args = array(), $isPost = true, array $headers = array())
 	{
+		$this->_httpCode = 0;
 		$isHttp = (preg_match('|^(http://)|i', $url) > 0);
 
 		// Options for cURL transfer
@@ -128,28 +147,33 @@ abstract class PlurkBase implements PlurkStrategy
 
 		// Initialize cURL
 		$ch = curl_init();
+		
+		if($ch === false)
+		{
+			// Execution failure.
+			throw new PlurkException('Failed to initialize cURL session.');
+		}
+		
 		curl_setopt_array($ch, $options);
 
 		// Execute the cURL call & get information about the response
 		$response = curl_exec($ch);
-
-		if($response === false)
-		{
-			// Execution failure.
-			throw new PlurkException('Failed to execute cURL session.');
-		}
-
 		$responseInfo = curl_getinfo($ch);
 			
 		// Close the cURL connection
 		curl_close($ch);
 
 		$this->_httpCode = (int)$responseInfo['http_code'];
-
+		
 		// Make sure we received a response from Plurk
 		if(empty($response))
 		{
 			throw new PlurkException('Empty response.');
+		}
+		else if($response == '{"error_text": "Plurk not found"}')
+		{
+			// Skip this error message.
+			return true;
 		}
 		else if($this->_httpCode >= 400)
 		{
