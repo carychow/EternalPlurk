@@ -554,6 +554,9 @@ class PlurkResponseParser
 		$info->posterUid			= (int)$plurkAry[PlurkPlurkInfo::KEY_POSTER_UID];
 		$info->qualifier			= (string)$plurkAry[PlurkPlurkInfo::KEY_QUALIFIER];
 		$info->qualifierTranslated	= (string)$plurkAry[PlurkPlurkInfo::KEY_QUALIFIER_TRANSLATED];
+		$info->replurkable			= (boolean)$plurkAry[PlurkPlurkInfo::KEY_REPLURKABLE];
+		$info->replurked			= (boolean)$plurkAry[PlurkPlurkInfo::KEY_REPLURKED];
+		$info->replurkerId			= (boolean)$plurkAry[PlurkPlurkInfo::KEY_REPLURKER_ID];
 		$info->replurkers			= $plurkAry[PlurkPlurkInfo::KEY_REPLURKERS];
 		$info->replurkersCount		= (int)$plurkAry[PlurkPlurkInfo::KEY_REPLURKERS_COUNT];
 		$info->responseCount		= (int)$plurkAry[PlurkPlurkInfo::KEY_RESPONSE_COUNT];
@@ -721,7 +724,10 @@ class PlurkResponseParser
 	{
 		$info = new PlurkUserInfo();
 		$info->avatar			= (int)$jsonAry[PlurkUserInfo::KEY_AVATAR];
+		$info->bdayPrivacy		= (int)$jsonAry[PlurkUserInfo::KEY_BDAY_PRIVACY];
 		$info->dateOfBirth		= new DateTime($jsonAry[PlurkUserInfo::KEY_DATE_OF_BIRTH]);
+		$info->dateformat		= (int)$jsonAry[PlurkUserInfo::KEY_DATE_FORMAT];
+		$info->defaultLang		= (string)$jsonAry[PlurkUserInfo::KEY_DEFAULT_LANG];
 		$info->displayName		= (string)$jsonAry[PlurkUserInfo::KEY_DISPLAY_NAME];
 		$info->emailConfirmed	= (boolean)$jsonAry[PlurkUserInfo::KEY_EMAIL_CONFIRMED];
 		$info->fullName			= (string)$jsonAry[PlurkUserInfo::KEY_FULL_NAME];
@@ -731,11 +737,13 @@ class PlurkResponseParser
 		$info->isPremium		= (boolean)$jsonAry[PlurkUserInfo::KEY_IS_PREMIUM];
 		$info->karma			= (double)$jsonAry[PlurkUserInfo::KEY_KARMA];
 		$info->location			= (string)$jsonAry[PlurkUserInfo::KEY_LOCATION];
+		$info->nameColor		= (string)$jsonAry[PlurkUserInfo::KEY_NAME_COLOR];
 		$info->nickName			= (string)$jsonAry[PlurkUserInfo::KEY_NICK_NAME];
 		$info->recruited		= (int)$jsonAry[PlurkUserInfo::KEY_RECRUITED];
 		$info->relationship		= (string)$jsonAry[PlurkUserInfo::KEY_RELATIONSHIP];
 		$info->timezone			= (string)$jsonAry[PlurkUserInfo::KEY_TIMEZONE];
 		$info->uid				= (int)$jsonAry[PlurkUserInfo::KEY_UID];
+		$info->verifiedAccount	= (boolean)$jsonAry[PlurkUserInfo::KEY_VERIFIED_ACCOUNT];
 		return $info;
 	}
 

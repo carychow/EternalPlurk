@@ -29,30 +29,16 @@ class PlurkUserInfo
 	 * @var	string
 	 */
 	const GENDER_FEMALE = 'female';
-
-	/**
-	 * User's privacy settings. (Whole world can view the profile)
-	 *
-	 * @var	string
-	 */
-	const PRIVACY_WORLD = 'world';
-
-	/**
-	 * User's privacy settings. (Only friends can view the profile)
-	 *
-	 * @var	string
-	 */
-	const PRIVACY_ONLY_FRIENDS = 'only_friends';
-
-	/**
-	 * User's privacy settings. (Only the user can view own plurks)
-	 *
-	 * @var	string
-	 */
-	const PRIVACY_ONLY_ME = 'only_me';
+	
+	const BDAY_DONT_SHOW = 0;
+	const BDAY_SHOW_MONTH_DAY = 1;
+	const BDAY_SHOW_FULL = 2;
 
 	const KEY_AVATAR = 'avatar';
+	const KEY_BDAY_PRIVACY = 'bday_privacy';
 	const KEY_DATE_OF_BIRTH = 'date_of_birth';
+	const KEY_DATE_FORMAT = 'dateformat';
+	const KEY_DEFAULT_LANG = 'default_lang';
 	const KEY_DISPLAY_NAME = 'display_name';
 	const KEY_EMAIL_CONFIRMED = 'email_confirmed';
 	const KEY_FULL_NAME = 'full_name';
@@ -62,14 +48,19 @@ class PlurkUserInfo
 	const KEY_IS_PREMIUM = 'is_premium';
 	const KEY_KARMA = 'karma';
 	const KEY_LOCATION = 'location';
+	const KEY_NAME_COLOR = 'name_color';
 	const KEY_NICK_NAME = 'nick_name';
 	const KEY_RECRUITED = 'recruited';
 	const KEY_RELATIONSHIP = 'relationship';
 	const KEY_TIMEZONE = 'timezone';
 	const KEY_UID = 'uid';
+	const KEY_VERIFIED_ACCOUNT = 'verified_account';
 
 	public $avatar;
+	public $bdayPrivacy;
 	public $dateOfBirth;
+	public $dateformat;
+	public $defaultLang;
 	public $displayName;
 	public $emailConfirmed;
 	public $fullName;
@@ -79,10 +70,12 @@ class PlurkUserInfo
 	public $isPremium;
 	public $karma;
 	public $location;
+	public $nameColor;
 	public $nickName;
 	public $recruited;
 	public $relationship;
 	public $timezone;
 	public $uid;
+	public $verifiedAccount;
 }
 ?>

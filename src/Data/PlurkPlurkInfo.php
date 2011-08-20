@@ -40,6 +40,9 @@ class PlurkPlurkInfo
 	const KEY_POSTER_UID = 'poster_uid';
 	const KEY_QUALIFIER = 'qualifier';
 	const KEY_QUALIFIER_TRANSLATED = 'qualifier_translated';
+	const KEY_REPLURKABLE = 'replurkable';
+	const KEY_REPLURKED = 'replurked';
+	const KEY_REPLURKER_ID = 'replurker_id';
 	const KEY_REPLURKERS = 'replurkers';
 	const KEY_REPLURKERS_COUNT = 'replurkers_count';
 	const KEY_RESPONSE_COUNT = 'response_count';
@@ -69,6 +72,9 @@ class PlurkPlurkInfo
 	public $posterUid;
 	public $qualifier;
 	public $qualifierTranslated;
+	public $replurkable;
+	public $replurked;
+	public $replurkerId;
 	public $replurkers;
 	public $replurkersCount;
 	public $responseCount;
