@@ -8,7 +8,6 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		2.0
  * @since		1.0
  */
 
@@ -29,6 +28,8 @@ require_once('PlurkPlurksUsersInfo.php');
 require_once('PlurkPlurksUsersOffsetInfo.php');
 require_once('PlurkProfileInfo.php');
 require_once('PlurkQualifier.php');
+require_once('PlurkReplurkInfo.php');
+require_once('PlurkReplurkInfoList.php');
 require_once('PlurkResponseInfo.php');
 require_once('PlurkUnreadCountInfo.php');
 require_once('PlurkUserInfo.php');

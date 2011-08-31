@@ -8,7 +8,6 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		2.0
  * @since		1.0
  */
 
@@ -137,7 +136,7 @@ class PlurkApp
 	
 	/**
 	 * Return a list of current active alerts.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @return	mixed	Returns an array of PlurkAlertInfo object on success or FALSE on failure.
 	 */
@@ -154,7 +153,7 @@ class PlurkApp
 	
 	/**
 	 * Return a list of past 30 alerts.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @return	mixed	Returns an array of PlurkAlertInfo object on success or FALSE on failure.
 	 */
@@ -171,7 +170,7 @@ class PlurkApp
 	
 	/**
 	 * Accept a user as fan.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int	$userId	The user ID that has asked for friendship.
 	 * @return	bool		Returns TRUE on success or FALSE on failure.
@@ -190,7 +189,7 @@ class PlurkApp
 	
 	/**
 	 * Accept all friendship requests as fans.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @return	bool	Returns TRUE on success or FALSE on failure.
 	 */
@@ -207,7 +206,7 @@ class PlurkApp
 	
 	/**
 	 * Accept all friendship requests as friends.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @return	bool	Returns TRUE on success or FALSE on failure.
 	 */
@@ -224,7 +223,7 @@ class PlurkApp
 	
 	/**
 	 * Accept a user as friend.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int	$userId	The user ID that has asked for friendship.
 	 * @return	bool		Returns TRUE on success or FALSE on failure.
@@ -243,7 +242,7 @@ class PlurkApp
 	
 	/**
 	 * Deny friendship to user.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int	$userId	The user ID that has asked for friendship.
 	 * @return	bool		Returns TRUE on success or FALSE on failure.
@@ -262,7 +261,7 @@ class PlurkApp
 	
 	/**
 	 * Remove notification to user with id.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int	$userId	The user ID that the current user has requested friendship for.
 	 * @return	bool		Returns TRUE on success or FALSE on failure.
@@ -284,7 +283,7 @@ class PlurkApp
 	
 	/**
 	 * Gets a list of users that are blocked by the current user.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int	offset	What page should be shown, e.g. 0, 10, 20.
 	 * @return	mixed		Returns a PlurkBlockInfo object on success or FALSE on failure.
@@ -303,7 +302,7 @@ class PlurkApp
 	
 	/**
 	 * Blocks a user.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int	$userId	The id of the user that should be blocked.
 	 * @return	bool		Returns TRUE on success or FALSE on failure.
@@ -322,7 +321,7 @@ class PlurkApp
 	
 	/**
 	 * Unblocks a user.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int	$userId	The id of the user that should be unblocked.
 	 * @return	bool		Returns TRUE on success or FALSE on failure.
@@ -344,7 +343,7 @@ class PlurkApp
 	
 	/**
 	 * Gets user's current cliques.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @return	mixed	Returns an array of the name of users current cliques or FALSE on failure.
 	 */
@@ -361,7 +360,7 @@ class PlurkApp
 	
 	/**
 	 * Gets the users in the clique.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	string	$cliqueName	The name of the clique.
 	 * @return	mixed	Returns an array of PlurkUserInfo object on success or FALSE on failure.
@@ -380,7 +379,7 @@ class PlurkApp
 	
 	/**
 	 * Creates a new clique.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	string	$cliqueName	The name of the new clique.
 	 * @return	bool				Returns TRUE on success or FALSE on failure.
@@ -399,7 +398,7 @@ class PlurkApp
 	
 	/**
 	 * Renames a clique.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	string	$cliqueName	The name of the clique to rename.
 	 * @param	string	$newName	The new name of the clique.
@@ -420,7 +419,7 @@ class PlurkApp
 	
 	/**
 	 * Adds a user to the clique.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	string	$cliqueName	The name of the clique.
 	 * @param	int		$userId		The user to add to the clique.
@@ -441,7 +440,7 @@ class PlurkApp
 	
 	/**
 	 * Removes a user from the clique.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	string	$cliqueName	The name of the clique.
 	 * @param	int		$userId		The user to remove from the clique.
@@ -465,6 +464,7 @@ class PlurkApp
 	
 	/**
 	 * Emoticons are a big part of Plurk since they make it easy to express feelings.
+	 * P.S. support two-legged OAuth without access token
 	 *
 	 * @return	mixed	Returns a PlurkEmoticonsInfo object on success or FALSE on failure.
 	 * @link	http://www.plurk.com/Help/extraSmilies
@@ -485,6 +485,7 @@ class PlurkApp
 	
 	/**
 	 * Returns user's friend list in chucks of 10 friends at a time.
+	 * P.S. support two-legged OAuth without access token
 	 *
 	 * @param	int		$userId	Must be integer (like 34), DO NOT use nick name (like amix).
 	 * @param	int		$offset	The offset, can be 10, 20, 30 etc.
@@ -507,6 +508,7 @@ class PlurkApp
 	
 	/**
 	 * Returns user's fans list in chucks of 10 fans at a time.
+	 * P.S. support two-legged OAuth without access token
 	 *
 	 * @param	mixed	$userId	Must be integer (like 34), DO NOT use nick name (like amix).
 	 * @param	int		$offset	The offset, can be 10, 20, 30 etc.
@@ -530,7 +532,7 @@ class PlurkApp
 	/**
 	 * Returns users that the current logged in user follows as fan - in chucks of 10 fans at a 
 	 * time.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int		$offset	The offset, can be 10, 20, 30 etc.
 	 * @param	int		$limit	The max number of friends to be returned (default 10).
@@ -551,7 +553,7 @@ class PlurkApp
 	
 	/**
 	 * Create a friend request to friend_id. User with friend_id has to accept a friendship.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int		$friendId	The ID of the user you want to befriend.
 	 * @return	bool				Returns TRUE on success or FALSE on failure.
@@ -570,7 +572,7 @@ class PlurkApp
 	
 	/**
 	 * Create a friend request to friend_id. User with friend_id has to accept a friendship.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int		$friendId	The ID of the user you want to remove.
 	 * @return	bool				Returns TRUE on success or FALSE on failure.
@@ -589,7 +591,7 @@ class PlurkApp
 	
 	/**
 	 * Become fan. To stop being a fan of someone, use setFollowing().
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int		$fanId	The ID of the user you want to become fan of.
 	 * @return	bool			Returns TRUE on success or FALSE on failure.
@@ -609,7 +611,7 @@ class PlurkApp
 	/**
 	 * Update following. A user can befriend someone, but can unfollow them. This request is also 
 	 * used to stop following someone as a fan.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int		$userId	The ID of the user you want to follow/unfollow.
 	 * @param	bool	$follow	TRUE if the user should be followed, and FALSE if the user should 
@@ -634,6 +636,7 @@ class PlurkApp
 	 * information can be used to construct auto-completion for private plurking. Notice that a 
 	 * friend list can be big, depending on how many friends a user has, so this list should be 
 	 * lazy-loaded in your application.
+	 * P.S. requires user's access token
 	 *
 	 * @return	mixed	Returns an array of PlurkUserInfo object on success or FALSE on failure.
 	 */
@@ -654,7 +657,7 @@ class PlurkApp
 	/**
 	 * You should use this call to find out if there any new plurks posted to the user's timeline. 
 	 * It's much more efficient than doing it with /API/Timeline/getPlurks, so please use it :)
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 * 
 	 * @param	mixed	$offset	Return plurks newer than $offset.  It can be a DataTime object or a 
 	 * 							string formatted as 2009-6-20T21:55:34.
@@ -677,7 +680,7 @@ class PlurkApp
 	
 	/**
 	 * Use this call to find out if there are unread plurks on a user's timeline.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 * 
 	 * @return	mixed	Returns a PlurkUnreadCountInfo object on success or FALSE on failure.
 	 */
@@ -698,7 +701,7 @@ class PlurkApp
 	/**
 	 * Returns data that's private for the currently logged in user. This can be used to construct 
 	 * a profile and render a timeline of the latest plurks.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @return	mixed	Returns a PlurkProfileInfo object on success or FALSE on failure.
 	 */
@@ -716,6 +719,7 @@ class PlurkApp
 	/**
 	 * Fetches public information such as a user's public plurks and basic information. Fetches 
 	 * also if the current logged in user is following the user, are friends with or is a fan.
+	 * P.S. support two-legged OAuth without access token
 	 *
 	 * @param	mixed	$userId	Can be integer (like 34) or nick name (like amix).
 	 * @return	mixed	Returns a PlurkProfileInfo object on success or FALSE on failure.
@@ -738,7 +742,7 @@ class PlurkApp
 	/**
 	 * Get instant notifications when there are new plurks and responses on a user's timeline. This 
 	 * is much more efficient and faster than polling so please use it!
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @return	mixed	Returns a PlurkChannelUserInfo object on success or FALSE on failure.
 	 */
@@ -788,6 +792,7 @@ class PlurkApp
 	
 	/**
 	 * Fetches responses for plurk with plurk id and some basic info about the users.
+	 * P.S. support two-legged OAuth without access token
 	 *  
 	 * @param	int	$plurkId		The plurk that the responses belong to. 
 	 * @param	int	$fromResponse	Only fetch responses from an offset - could be 5, 10 or 15.
@@ -809,7 +814,7 @@ class PlurkApp
 	
 	/**
 	 * Adds a response. Language is inherited from the plurk.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 * 
 	 * @param	string	$plurkId	The plurk that the responses should be added to. 
 	 * @param	string	$content	The response's text.
@@ -834,7 +839,7 @@ class PlurkApp
 	/**
 	 * Deletes a response. A user can delete own responses or responses that are posted to own 
 	 * plurks.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 * 
 	 * @param	int	$responseId	The id of the response to delete. 
 	 * @param	int	$plurkId	The plurk that the response belongs to.
@@ -858,6 +863,7 @@ class PlurkApp
 	
 	/**
 	 * Returns the latest 20 plurks on a search term.
+	 * P.S. support two-legged OAuth without access token
 	 *
 	 * @param	string	$query	The query after Plurks.
 	 * @param	int		$offset	A plurk ID of the oldest Plurk in the last search result.
@@ -879,6 +885,7 @@ class PlurkApp
 	
 	/**
 	 * Returns 10 users that match query, users are sorted by karma.
+	 * P.S. support two-legged OAuth without access token
 	 *
 	 * @param	string	$query	The query after users.
 	 * @param	int		$offset	Page offset, like 10, 20, 30 etc.
@@ -902,7 +909,7 @@ class PlurkApp
 	
 	/**
 	 * Gets a plurk.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int	$plurkId	The unique id of the plurk. Should be passed as a number, and not 
 	 * 							base 36 encoded.
@@ -922,7 +929,7 @@ class PlurkApp
 	
 	/**
 	 * Gets all the plurks and their owners' information.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	mixed	$offset	Returns plurks older than $offset. It can be a DataTime object or a 
 	 * 							string formatted as 2009-6-20T21:55:34.
@@ -949,7 +956,7 @@ class PlurkApp
 	
 	/**
 	 * Gets all the unread plurks and their owners' information.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	mixed	$offset	Returns plurks older than offset. It can be a DataTime object or a 
 	 * 							string formatted as 2009-6-20T21:55:34.
@@ -1004,7 +1011,7 @@ class PlurkApp
 	
 	/**
 	 * Adds a new plurk.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	string	$content		The Plurk's text.
 	 * @param	string	$qualifier		The Plurk's qualifier, e.g. PlurkQualifier::QUALIFIER_SAYS.
@@ -1040,7 +1047,7 @@ class PlurkApp
 	
 	/**
 	 * Deletes a plurk.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int	$plurkId	The id of the plurk.
 	 * @return	bool			Returns TRUE on success or FALSE on failure.
@@ -1059,7 +1066,7 @@ class PlurkApp
 	
 	/**
 	 * Edits a plurk.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	int		$plurkId	The id of the plurk.
 	 * @param	string	$content	The content of plurk.
@@ -1080,7 +1087,7 @@ class PlurkApp
 	
 	/**
 	 * Mutes one or more plurks.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	array	$ids	The plurk ids, e.g. array(342,23242,2323)
 	 * @return	bool			Returns TRUE on success or FALSE on failure.
@@ -1099,7 +1106,7 @@ class PlurkApp
 	
 	/**
 	 * Unmutes one or more plurks.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	array	$ids	The plurk ids, e.g. array(342,23242,2323)
 	 * @return	bool			Returns TRUE on success or FALSE on failure.
@@ -1118,7 +1125,7 @@ class PlurkApp
 	
 	/**
 	 * Favorites one or more plurks.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	array	$ids	The plurk ids, e.g. array(342,23242,2323)
 	 * @return	bool			Returns TRUE on success or FALSE on failure.
@@ -1137,7 +1144,7 @@ class PlurkApp
 	
 	/**
 	 * Unfavorites one or more plurks.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	array	$ids	The plurk ids, e.g. array(342,23242,2323)
 	 * @return	bool			Returns TRUE on success or FALSE on failure.
@@ -1155,8 +1162,46 @@ class PlurkApp
 	}
 	
 	/**
+	 * Replurk one or more plurks
+	 * P.S. requires user's access token
+	 * 
+	 * @param	array $ids	The plurk ids, e.g. array(342,23242,2323)
+	 * @return	mixed		Returns a PlurkReplurkInfoList object on success or FALSE on failure.
+	 */
+	public function replurk(array $ids)
+	{
+		$setting = new PlurkTimelineSetting();
+		$setting->type = PlurkTimelineSetting::TYPE_REPLURK;
+		$setting->ids = $ids;
+		
+		$this->setupAuthSettings($setting);
+		
+		$this->_strategy = new PlurkTimeline($setting);
+		return $this->execute();
+	}
+	
+	/**
+	 * Unreplurk one or more plurks
+	 * P.S. requires user's access token
+	 * 
+	 * @param	array $ids	The plurk ids, e.g. array(342,23242,2323)
+	 * @return	mixed		Returns a PlurkReplurkInfoList object on success or FALSE on failure.
+	 */
+	public function unreplurk(array $ids)
+	{
+		$setting = new PlurkTimelineSetting();
+		$setting->type = PlurkTimelineSetting::TYPE_UNREPLURK;
+		$setting->ids = $ids;
+		
+		$this->setupAuthSettings($setting);
+		
+		$this->_strategy = new PlurkTimeline($setting);
+		return $this->execute();
+	}
+	
+	/**
 	 * Marks one or more plurks as read.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	array	$ids	The plurk ids, e.g. array(342,23242,2323)
 	 * @return	bool			Returns TRUE on success or FALSE on failure.
@@ -1175,7 +1220,7 @@ class PlurkApp
 	
 	/**
 	 * Upload a picture.
-	 * P.S. requires login
+	 * P.S. requires user's access token
 	 *
 	 * @param	string	$imgPath	Path of the picture.
 	 * @return	mixed				Returns a PlurkPictureInfo object on success or FALSE on 
@@ -1199,6 +1244,7 @@ class PlurkApp
 	/**
 	 * Returns info about a user's karma, including current karma, karma growth, karma graph and 
 	 * the latest reason why the karma has dropped.
+	 * P.S. requires user's access token
 	 * 
 	 * @return	mixed	Returns a PlurkKarmaInfo object on success or FALSE on failure.
 	 */

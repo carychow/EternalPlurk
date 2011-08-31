@@ -8,7 +8,6 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		2.0
  * @since		1.0
  */
 
@@ -21,11 +20,17 @@ class PlurkPollingSetting extends PlurkOAuthSetting
 	
 	public $offset;
 	public $limit;
+	public $favorersDetail;
+	public $limitedDetail;
+	public $replurkersDetail;
 	
 	public function __construct()
 	{
 		$this->offset = 'now';
 		$this->limit = 50;
+		$this->favorersDetail = false;
+		$this->limitedDetail = false;
+		$this->replurkersDetail = false;
 	}
 }
 ?>

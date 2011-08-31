@@ -8,7 +8,6 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		2.0
  * @since		1.0
  */
 
@@ -29,6 +28,8 @@ class PlurkTimelineSetting extends PlurkOAuthSetting
 	const TYPE_MARK_AS_READ = 11;
 	const TYPE_UPLOAD_PICTURE = 12;
 	const TYPE_GET_PUBLIC_PLURKS = 13;
+	const TYPE_REPLURK = 14;
+	const TYPE_UNREPLURK = 15;
 	
 	const PLURK_TYPE_USER = 'only_user';
 	const PLURK_TYPE_RESPONDED = 'only_responded';
@@ -75,6 +76,9 @@ class PlurkTimelineSetting extends PlurkOAuthSetting
 	const LANG_FA = 'fa';
 
 	public $plurkId;
+	public $favorersDetail;
+	public $limitedDetail;
+	public $replurkersDetail;
 	public $offset;
 	public $limit;
 	public $filter;
@@ -89,6 +93,9 @@ class PlurkTimelineSetting extends PlurkOAuthSetting
 	
 	public function __construct()
 	{
+		$this->favorersDetail = false;
+		$this->limitedDetail = false;
+		$this->replurkersDetail = false;
 		$this->offset = 'now';
 		$this->limit = 20;
 		$this->noComments = 0;

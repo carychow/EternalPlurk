@@ -46,6 +46,8 @@ class PlurkTimeline extends PlurkOAuth
 			case PlurkTimelineSetting::TYPE_MARK_AS_READ:		return $this->markAsRead();
 			case PlurkTimelineSetting::TYPE_UPLOAD_PICTURE:		return $this->uploadPicture();
 			case PlurkTimelineSetting::TYPE_GET_PUBLIC_PLURKS:	return $this->getPublicPlurks();
+			case PlurkTimelineSetting::TYPE_REPLURK:			return $this->replurk();
+			case PlurkTimelineSetting::TYPE_UNREPLURK:			return $this->unreplurk();
 			default:											return false;
 		}		
 	}
@@ -61,7 +63,12 @@ class PlurkTimeline extends PlurkOAuth
 	private function getPlurk()
 	{
 		$url = sprintf('%sTimeline/getPlurk', self::HTTP_URL);
-		$args = array('plurk_id' => (int)$this->_setting->plurkId);
+		$args = array(
+			'plurk_id' 			=> (int)$this->_setting->plurkId,
+			'favorers_detail'	=> (boolean)$this->_setting->favorersDetail,
+			'limited_detail'	=> (boolean)$this->_setting->limitedDetail,
+			'replurkers_detail'	=> (boolean)$this->_setting->replurkersDetail
+		);
 
 		$this->setResultType(PlurkResponseParser::RESULT_PLURK);
 		return $this->sendRequest($url, $args);
@@ -271,6 +278,8 @@ class PlurkTimeline extends PlurkOAuth
 	
 	/**
 	 * Gets public plurks from a user.
+	 * 
+	 * @return	mixed	Returns a PlurkPlurksUsersInfo object on success or FALSE on failure.
 	 */
 	private function getPublicPlurks()
 	{
@@ -285,6 +294,34 @@ class PlurkTimeline extends PlurkOAuth
 		);
 
 		$this->setResultType(PlurkResponseParser::RESULT_PLURKS_USERS);
+		return $this->sendRequest($url, $args);
+	}
+	
+	/**
+	 * Replurk one or more plurks.
+	 * 
+	 * @return	mixed	Returns a PlurkReplurkInfoList object on success or FALSE on failure.
+	 */
+	private function replurk()
+	{
+		$url = sprintf('%sTimeline/replurk', self::HTTP_URL);
+		$args = array('ids' => json_encode($this->_setting->ids));
+
+		$this->setResultType(PlurkResponseParser::RESULT_REPLURK);
+		return $this->sendRequest($url, $args);
+	}
+	
+	/**
+	 * Unreplurk one or more plurks.
+	 * 
+	 * @return	mixed	Returns a PlurkReplurkInfoList object on success or FALSE on failure.
+	 */
+	private function unreplurk()
+	{
+		$url = sprintf('%sTimeline/unreplurk', self::HTTP_URL);
+		$args = array('ids' => json_encode($this->_setting->ids));
+
+		$this->setResultType(PlurkResponseParser::RESULT_REPLURK);
 		return $this->sendRequest($url, $args);
 	}
 

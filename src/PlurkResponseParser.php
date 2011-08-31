@@ -8,7 +8,6 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		2.0
  * @since		1.0
  */
 
@@ -188,6 +187,13 @@ class PlurkResponseParser
 	 * @var	int
 	 */
 	const RESULT_PLURKS_USERS_OFFSET = 23;
+	
+	/**
+	 * Result is info of replurk.
+	 *
+	 * @var	int
+	 */
+	const RESULT_REPLURK = 24;
 
 	// ------------------------------------------------------------------------------------------ //
 
@@ -270,6 +276,7 @@ class PlurkResponseParser
 			case self::RESULT_PLURKS_USERS:			return $this->parsePlurksUsers($jsonAry);
 			case self::RESULT_PLURKS_USERS_OFFSET:	return $this->parsePlurksUsersOffset($jsonAry);
 			case self::RESULT_PROFILE:				return $this->parseProfile($jsonAry);
+			case self::RESULT_REPLURK:				return $this->parseReplurkList($jsonAry);
 			case self::RESULT_RESPONSE:				return $this->parseResponse($jsonAry);
 			case self::RESULT_SEARCH_PLURK:			return $this->parseSearchPlurk($jsonAry);
 			case self::RESULT_SEARCH_USER:			return $this->parseSearchUser($jsonAry);
@@ -464,18 +471,31 @@ class PlurkResponseParser
 		return $collections;
 	}
 	
-	protected function parseEmoticon(array $jsonAry)
+	protected function parseEmoticon(array $jsonAry, $isCustom = false)
 	{
 		$catAry = array();
 		
-		foreach($jsonAry as $threshold => $emoticonAry)
+		if($isCustom)
 		{
-			foreach($emoticonAry as $emoticon)
+			foreach($jsonAry as $emoticon)
 			{
 				$info = new PlurkEmoticonInfo();
-				$info->code = $emoticon[0];
+				$info->code = '[' . $emoticon[0] . ']';
 				$info->url = $emoticon[1];
-				$catAry[$threshold][] = $info;
+				$catAry[] = $info;
+			}
+		}
+		else
+		{
+			foreach($jsonAry as $threshold => $emoticonAry)
+			{
+				foreach($emoticonAry as $emoticon)
+				{
+					$info = new PlurkEmoticonInfo();
+					$info->code = $emoticon[0];
+					$info->url = $emoticon[1];
+					$catAry[$threshold][] = $info;
+				}
 			}
 		}
 		
@@ -491,6 +511,7 @@ class PlurkResponseParser
 	protected function parseEmoticons(array $jsonAry)
 	{
 		$info = new PlurkEmoticonsInfo();
+		$info->custom	= $this->parseEmoticon($jsonAry[PlurkEmoticonsInfo::KEY_CUSTOM], true);
 		$info->karma	= $this->parseEmoticon($jsonAry[PlurkEmoticonsInfo::KEY_KARMA]);
 		$info->recuited	= $this->parseEmoticon($jsonAry[PlurkEmoticonsInfo::KEY_RECUITED]);
 		return $info;
@@ -556,7 +577,7 @@ class PlurkResponseParser
 		$info->qualifierTranslated	= (string)$plurkAry[PlurkPlurkInfo::KEY_QUALIFIER_TRANSLATED];
 		$info->replurkable			= (boolean)$plurkAry[PlurkPlurkInfo::KEY_REPLURKABLE];
 		$info->replurked			= (boolean)$plurkAry[PlurkPlurkInfo::KEY_REPLURKED];
-		$info->replurkerId			= (boolean)$plurkAry[PlurkPlurkInfo::KEY_REPLURKER_ID];
+		$info->replurkerId			= $plurkAry[PlurkPlurkInfo::KEY_REPLURKER_ID];
 		$info->replurkers			= $plurkAry[PlurkPlurkInfo::KEY_REPLURKERS];
 		$info->replurkersCount		= (int)$plurkAry[PlurkPlurkInfo::KEY_REPLURKERS_COUNT];
 		$info->responseCount		= (int)$plurkAry[PlurkPlurkInfo::KEY_RESPONSE_COUNT];
@@ -639,6 +660,30 @@ class PlurkResponseParser
 		$info->privacy				= (int)$jsonAry[PlurkProfileInfo::KEY_PRIVACY];
 		$info->userInfo				= $this->parseUser($jsonAry[PlurkProfileInfo::KEY_USER_INFO]);
 		return $info;
+	}
+	
+	protected function parseReplurkList(array $jsonAry)
+	{
+		$info = new PlurkReplurkInfoList();
+		$info->success	= (bool)$jsonAry[PlurkReplurkInfoList::KEY_SUCCESS];
+		$info->results	= $this->parseReplurk($jsonAry[PlurkReplurkInfoList::KEY_RESULTS]);
+		return $info;
+	}
+	
+	protected function parseReplurk(array $jsonAry)
+	{
+		$results = array();
+		
+		foreach($jsonAry as $id => $result)
+		{
+			$info = new PlurkReplurkInfo();
+			$info->plurk	= $this->parsePlurk($result[PlurkReplurkInfo::KEY_PLURK]);
+			$info->success	= (bool)$result[PlurkReplurkInfo::KEY_SUCCESS];
+			$info->error	= $result[PlurkReplurkInfo::KEY_ERROR];
+			$results[$id] = $info;
+		}
+		
+		return $results;
 	}
 
 	/**

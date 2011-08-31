@@ -57,8 +57,11 @@ class PlurkPolling extends PlurkOAuth
 		$offset = $this->_setting->offset;
 		$time = ($offset instanceof DateTime) ? $offset : new DateTime($offset);
 		$args = array(
-			'offset'	=>	$time->format('Y-m-d\TH:i:s'),
-			'limit'		=>	$this->_setting->limit
+			'offset'			=> $time->format('Y-m-d\TH:i:s'),
+			'limit'				=> (int)$this->_setting->limit,
+			'favorers_detail'	=> (boolean)$this->_setting->favorersDetail,
+			'limited_detail'	=> (boolean)$this->_setting->limitedDetail,
+			'replurkers_detail'	=> (boolean)$this->_setting->replurkersDetail
 		);
 
 		$this->setResultType(PlurkResponseParser::RESULT_PLURKS_USERS);

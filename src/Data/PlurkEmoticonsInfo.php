@@ -8,15 +8,16 @@
  *
  * @package		EternalPlurk
  * @author		Cary Chow <carychowhk@gmail.com>
- * @version		2.0
  * @since		1.0
  */
 
 class PlurkEmoticonsInfo
 {
+	const KEY_CUSTOM = 'custom';
 	const KEY_KARMA = 'karma';
 	const KEY_RECUITED = 'recuited';
 	
+	public $custom;
 	public $karma;
 	public $recuited;
 }
